@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Device3X</string>
+
+    <string name="change">Shift</string>
+    <string name="limit">Limit</string>
+
+
+    <string name="west">West</string>
+    <string name="east">East</string>
+    <string name="north">North</string>
+    <string name="south">South</string>
+    <string name="northeast">Northeast</string>
+    <string name="northwest">Northwest</string>
+    <string name="southeast">Southeast</string>
+    <string name="southwest">Southwest</string>
+
+    <string name="level_1_navi">Navigation</string>
+    <string name="level_1_record">Recording</string>
+    <string name="level_1_warn">Warning</string>
+    <string name="level_2_fm">FM</string>
+    <string name="level_2_music">Music</string>
+    <string name="level_2_phone">Bluetooth tel</string>
+    <string name="level_2_weather">Weather</string>
+    <string name="level_2_setting">Set</string>
+
+    <string name="level2_navi">Navigation</string>
+    <string name="level2_record">Recording</string>
+    <string name="level2_phone">Bluetooth tel</string>
+    <string name="level2_music">Music</string>
+    <string name="level2_fm">FM</string>
+    <string name="level2_internet">Wifi</string>
+    <string name="level2_about">About it</string>
+    <string name="level2_setting">Set</string>
+    <string name="level2_update">Upgrade</string>
+    <string name="level2_weather">Weather</string>
+    <string name="level2_filemanager">File Manager</string>
+    <string name="level2_warn">Warning</string>
+</resources>

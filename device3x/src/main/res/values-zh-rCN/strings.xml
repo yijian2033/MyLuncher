@@ -1,0 +1,36 @@
+<resources>
+  <string name="change">切换</string>
+  <string name="limit">限 速</string>
+
+  <string name="west">正西</string>
+  <string name="east">正东</string>
+  <string name="north">正北</string>
+  <string name="south">正南</string>
+  <string name="northeast">东北</string>
+  <string name="northwest">西北</string>
+  <string name="southeast">东南</string>
+  <string name="southwest">西南</string>
+
+  <string name="level_1_navi">导 航</string>
+  <string name="level_1_record">行车记录</string>
+  <string name="level_1_warn">征仔预警</string>
+  <string name="level_2_fm">FM</string>
+  <string name="level_2_music">音乐</string>
+  <string name="level_2_phone">蓝牙电话</string>
+  <string name="level_2_weather">天气</string>
+  <string name="level_2_setting">设置</string>
+
+  <string name="level2_navi">导 航</string>
+  <string name="level2_record">行车记录</string>
+  <string name="level2_phone">蓝牙电话</string>
+  <string name="level2_music">音 乐</string>
+  <string name="level2_fm">FM</string>
+  <string name="level2_internet">网 络</string>
+  <string name="level2_about">关于设备</string>
+  <string name="level2_setting">设 置</string>
+  <string name="level2_update">系统升级</string>
+  <string name="level2_weather">天 气</string>
+  <string name="level2_filemanager">文件管理</string>
+  <string name="level2_warn">征仔预警</string>
+
+</resources>

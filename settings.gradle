@@ -1,0 +1,6 @@
+//include ':sample', ':library', 'BS362Launcher', ':device3x', ':device3'
+////project('device3x').projectDir = new File(':BS362Launcher2')
+////project(':BS362Launcher2').projectDir = new File('device3x')
+
+
+include ':library', ':device3x'
