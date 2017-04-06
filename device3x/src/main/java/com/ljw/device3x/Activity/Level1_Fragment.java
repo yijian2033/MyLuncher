@@ -149,6 +149,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
 
     @Override
     public void onLocationChanged(MyLocation location) {
+//        toast("Gps回调");
         long currentTime = location.time;
         if(!CommonCtrl.isFirstSystemTimeSet) {
             if(!DeviceApplication.isNetworkAvailable && currentTime / 1000 < Integer.MAX_VALUE) {

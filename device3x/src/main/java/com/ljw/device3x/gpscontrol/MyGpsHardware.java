@@ -73,6 +73,7 @@ public class MyGpsHardware {
          * 位置信息变化时触发
          */
         public void onLocationChanged(Location location) {
+            Log.d("ljwtestgps", "gps回调");
             MyLocation myLocation = new MyLocation();
             myLocation.lat    = location.getLatitude();
             myLocation.lon    = location.getLongitude();
