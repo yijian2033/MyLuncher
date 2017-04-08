@@ -124,6 +124,7 @@
                 android:progressDrawable="@drawable/myseekbar"/>
 
             <ImageView
+                android:id="@+id/brightauto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/seekbar_nonesun"/>
@@ -138,7 +139,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/seekbar_voice"/>
+                android:src="@mipmap/seekbar_nonevoice"/>
 
             <SeekBar
                 android:id="@+id/voiceseekbar"
@@ -153,7 +154,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/seekbar_nonevoice"/>
+                android:src="@mipmap/seekbar_voice"/>
         </LinearLayout>
 
     </LinearLayout>

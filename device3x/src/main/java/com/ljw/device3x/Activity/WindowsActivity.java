@@ -9,6 +9,7 @@ import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Message;
@@ -73,6 +74,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     private DrawerLayout drawer;
     SeekBar brightSeekBar;
     SeekBar voiceSeekbar;
+    private ImageView brightAuto;
     View headView;
     private Timer timer;
     private CloseDrawbleTimer closeDrawbleTimer;
@@ -91,7 +93,11 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         initView();
         notifyFMAndBt();
         /**注册监听系统亮度改变事件*/
-//        this.getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),true, BrightnessMode);
+        this.getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),true, BrightnessMode);
+        this.getContentResolver().registerContentObserver(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS_MODE),true, BrightnessMode);
+        this.getContentResolver().registerContentObserver(Settings.System.getUriFor("screen_auto_brightness_adj"),true, BrightnessMode);
+
+
     }
 
     private void notifyFMAndBt() {
@@ -101,13 +107,14 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     /**
      * 时刻监听系统亮度改变事件
      */
-//    private ContentObserver BrightnessMode = new ContentObserver(new android.os.Handler()) {
-//        @Override
-//        public void onChange(boolean selfChange, Uri uri) {
-////            super.onChange(selfChange, uri);
-//            initBrightSeekbar();
-//        }
-//    };
+    private ContentObserver BrightnessMode = new ContentObserver(new android.os.Handler()) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+//            super.onChange(selfChange, uri);
+            Log.i("guifawei","BrightnessMode change");
+            initBrightSeekbar();
+        }
+    };
 
     /**
      * @createDate
@@ -233,7 +240,31 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
                 closeHomeDrawble();
             }
         });
+        brightAuto = (ImageView)headView.findViewById(R.id.brightauto);
+        upDateBrightAutoImg();
+        brightAuto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+                if (isBrightAuto()){
+                    try {
+                        Settings.System.putInt(getContentResolver(),
+                                Settings.System.SCREEN_BRIGHTNESS_MODE, 0);
+                    } catch (Exception localException) {
+                        localException.printStackTrace();
+                    }
+                }else {
+                    try {
+                        Settings.System.putInt(getContentResolver(),
+                                Settings.System.SCREEN_BRIGHTNESS_MODE, 1);
+                    } catch (Exception localException) {
+                        localException.printStackTrace();
+                    }
+                }
+                upDateBrightAutoImg();
+                initBrightSeekbar();
+            }
+        });
 
         verticalViewPager = (ViewPager)findViewById(R.id.vertical_viewpager);
         verticalViewPager.setAdapter(new ContentFragmentAdapter.Holder(getSupportFragmentManager())
@@ -272,11 +303,25 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
 
         closeDrawbleHandler = new CloseDrawbleHandler();
         timer = new Timer(true);
-//        initVoiceSeekbar();
-//        initBrightSeekbar();
+        initVoiceSeekbar();
+        initBrightSeekbar();
     }
 
+    private void upDateBrightAutoImg() {
 
+       boolean mAutomatic = isBrightAuto();
+        brightAuto.setImageResource(mAutomatic ?
+                R.mipmap.seekbar_autosun :
+                R.mipmap.seekbar_nonesun);
+    }
+    private boolean isBrightAuto() {
+        int automatic;
+        automatic = Settings.System.getInt(getContentResolver(),
+                Settings.System.SCREEN_BRIGHTNESS_MODE,
+                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+        boolean mAutomatic = automatic != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
+        return  mAutomatic;
+    }
 
     public void jumpToPage2() {
         verticalViewPager.setCurrentItem(1);
@@ -363,6 +408,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     protected void onDestroy() {
         super.onDestroy();
 //        stopLocationService();
+        this.getContentResolver().unregisterContentObserver(BrightnessMode);
         unregisterReceiver(mRecieve);
     }
 
@@ -404,9 +450,9 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
                 Log.i("ljwtest:", "收到的地图是" + intent.getStringExtra("maptype"));
                 Utils.setLocalMapType(intent.getStringExtra("maptype"), getApplicationContext());
             } else if(action.equals("android.media.VOLUME_CHANGED_ACTION") || action.equals("com.bs360.synclaunchervol")) {
-//                initVoiceSeekbar();
+               initVoiceSeekbar();
             } else if(action.equals("com.bs360.synclauncherbri") || action.equals("com.bs360.brichangefromspeech")) {
-//                initBrightSeekbar();
+                initBrightSeekbar();
             } else if(action.equals("com.aios.closequickset")) {
                 closeHomeDrawble();
             } else if(action.equals("com.aios.openquickset")) {
@@ -435,14 +481,30 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     }
 
     private void initBrightSeekbar() {
+        upDateBrightAutoImg();
         brightSeekBar = (SeekBar)headView.findViewById(R.id.brightseekbar);
-        // 进度条绑定最大亮度，255是最大亮度
-        brightSeekBar.setMax(255);
-        // 取得当前亮度
-        int normal = Settings.System.getInt(getContentResolver(),
-                Settings.System.SCREEN_BRIGHTNESS, 255);
-        // 进度条绑定当前亮度
-        brightSeekBar.setProgress(normal);
+        brightSeekBar.setOnTouchListener(null);
+        brightSeekBar.setOnSeekBarChangeListener(null);
+        if (isBrightAuto()){
+           // 进度条绑定最大亮度，255是最大亮度
+            brightSeekBar.setMax(100);
+           // 取得当前亮度
+            float value = Settings.System.getFloat(getContentResolver(),
+                    "screen_auto_brightness_adj", 0);
+            // 进度条绑定当前亮度
+            brightSeekBar.setProgress((int) ((value + 1) * 100 / 2f));
+            Log.i("guifawei","initBrightSeekbar---isBrightAuto--value"+value);
+        }else{
+            // 进度条绑定最大亮度，255是最大亮度
+            brightSeekBar.setMax(255);
+            // 取得当前亮度
+            int normal = Settings.System.getInt(getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS, 255);
+            // 进度条绑定当前亮度
+            brightSeekBar.setProgress(255-normal);
+            Log.i("guifawei","initBrightSeekbar---!isBrightAuto--normal"+normal);
+        }
+
 
         brightSeekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -458,26 +520,45 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Intent intent1 = new Intent("com.bs360.syncsettingbri");
                 sendBroadcast(intent1);
-//                // 取得当前进度
-//                int tmpInt = seekBar.getProgress();
-//
-//                // 当进度小于80时，设置成80，防止太黑看不见的后果。
-//                if (tmpInt < 20) {
-//                    tmpInt = 20;
-//                }
-//
-//                // 根据当前进度改变亮度
-//                Settings.System.putInt(getContentResolver(),
-//                        Settings.System.SCREEN_BRIGHTNESS, tmpInt);
-//                tmpInt = Settings.System.getInt(getContentResolver(),
-//                        Settings.System.SCREEN_BRIGHTNESS, -1);
-//                WindowManager.LayoutParams wl = getWindow().getAttributes();
-//
-//                float tmpFloat = (float) tmpInt / 100;
-//                if (tmpFloat > 0 && tmpFloat <= 1) {
-//                    wl.screenBrightness = tmpFloat;
-//                }
-//                getWindow().setAttributes(wl);
+                if (isBrightAuto()){
+
+                    // 取得当前进度
+                    int tmpInt = seekBar.getProgress();
+                    final float adj = tmpInt / (100 / 2f) - 1;
+                    setBrightnessAdj(adj);
+                    {
+                        AsyncTask.execute(new Runnable() {
+                            public void run() {
+                                Settings.System.putFloat(getContentResolver(),
+                                        "screen_auto_brightness_adj", adj);
+                            }
+                        });
+                    }
+                    Log.i("guifawei","setOnSeekBarChangeListener---onStopTrackingTouch--isBrightAuto"+tmpInt);
+                }else{
+                    // 取得当前进度
+                    int tmpInt = 255-seekBar.getProgress();
+                    Log.i("guifawei","setOnSeekBarChangeListener---onStopTrackingTouch--!isBrightAuto"+tmpInt);
+                    // 当进度小于80时，设置成80，防止太黑看不见的后果。
+                   /* if (tmpInt < 20) {
+                        tmpInt = 20;
+                        seekBar.setProgress(tmpInt);
+                    }*/
+
+                    // 根据当前进度改变亮度
+                    Settings.System.putInt(getContentResolver(),
+                            Settings.System.SCREEN_BRIGHTNESS, tmpInt);
+                    tmpInt = Settings.System.getInt(getContentResolver(),
+                            Settings.System.SCREEN_BRIGHTNESS, -1);
+                    WindowManager.LayoutParams wl = getWindow().getAttributes();
+
+                    float tmpFloat = (float) tmpInt / 255;
+                    if (tmpFloat > 0 && tmpFloat <= 1) {
+                        wl.screenBrightness = tmpFloat;
+                    }
+                    getWindow().setAttributes(wl);
+                }
+
 
             }
 
@@ -490,28 +571,52 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
                 // TODO Auto-generated method stub
-                // 取得当前进度
-                int tmpInt = progress;
+                if (isBrightAuto()){
 
-                // 当进度小于80时，设置成80，防止太黑看不见的后果。
-                if (tmpInt < 50) {
-                    tmpInt = 50;
+                    // 取得当前进度
+                    int tmpInt = progress;
+                    final float adj = tmpInt / (100 / 2f) - 1;
+                    setBrightnessAdj(adj);
+                    {
+                        AsyncTask.execute(new Runnable() {
+                            public void run() {
+                                Settings.System.putFloat(getContentResolver(),
+                                        "screen_auto_brightness_adj", adj);
+                            }
+                        });
+                    }
+                    Log.i("guifawei","setOnSeekBarChangeListener---onProgressChanged--isBrightAuto"+tmpInt);
+                }else {
+                    // 取得当前进度
+                    int tmpInt = 255-progress;
+                    Log.i("guifawei","setOnSeekBarChangeListener---onProgressChanged--!isBrightAuto"+tmpInt);
+                    // 当进度小于80时，设置成80，防止太黑看不见的后果。
+                    /*if (tmpInt < 20) {
+                        tmpInt = 20;
+                    }*/
+
+                    // 根据当前进度改变亮度
+                    Settings.System.putInt(getContentResolver(),
+                            Settings.System.SCREEN_BRIGHTNESS, tmpInt);
+                    tmpInt = Settings.System.getInt(getContentResolver(),
+                            Settings.System.SCREEN_BRIGHTNESS, -1);
+                    WindowManager.LayoutParams wl = getWindow().getAttributes();
+
+                    float tmpFloat = (float) tmpInt / 255;
+                    if (tmpFloat > 0 && tmpFloat <= 1) {
+                        wl.screenBrightness = tmpFloat;
+                    }
+                    getWindow().setAttributes(wl);
                 }
 
-                // 根据当前进度改变亮度
-                Settings.System.putInt(getContentResolver(),
-                        Settings.System.SCREEN_BRIGHTNESS, tmpInt);
-                tmpInt = Settings.System.getInt(getContentResolver(),
-                        Settings.System.SCREEN_BRIGHTNESS, -1);
-                WindowManager.LayoutParams wl = getWindow().getAttributes();
-
-                float tmpFloat = (float) tmpInt / 255;
-                if (tmpFloat > 0 && tmpFloat <= 1) {
-                    wl.screenBrightness = tmpFloat;
-                }
-                getWindow().setAttributes(wl);
             }
         });
+    }
+
+    private void setBrightnessAdj(float adj) {
+        Intent intent = new Intent("com.bs360.setBrightnessAdj");
+        intent.putExtra("BrightnessAdj",adj);
+        sendBroadcast(intent);
     }
 
     private void setScreenBrightness(float b){

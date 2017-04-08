@@ -12,10 +12,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/NotitleTheme">
-        <!-- 设置key -->
+        <!-- 设置key  android:value="2498afb67e23c42da74ec067a170fe6f"-->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="2498afb67e23c42da74ec067a170fe6f" />
+            android:value="d3e332224bc53c366cc7b2633ee106a0"/>
         <!-- 定位需要的服务 -->
         <service android:name="com.amap.api.location.APSService" >
         </service>
