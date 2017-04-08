@@ -240,7 +240,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
                 closeHomeDrawble();
             }
         });
-        brightAuto = (ImageView)headView.findViewById(R.id.brightauto);
+        /*brightAuto = (ImageView)headView.findViewById(R.id.brightauto);
         upDateBrightAutoImg();
         brightAuto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,7 +264,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
                 upDateBrightAutoImg();
                 initBrightSeekbar();
             }
-        });
+        });*/
 
         verticalViewPager = (ViewPager)findViewById(R.id.vertical_viewpager);
         verticalViewPager.setAdapter(new ContentFragmentAdapter.Holder(getSupportFragmentManager())
@@ -481,11 +481,10 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     }
 
     private void initBrightSeekbar() {
-        upDateBrightAutoImg();
         brightSeekBar = (SeekBar)headView.findViewById(R.id.brightseekbar);
         brightSeekBar.setOnTouchListener(null);
         brightSeekBar.setOnSeekBarChangeListener(null);
-        if (isBrightAuto()){
+        if (false/*isBrightAuto()*/){
            // 进度条绑定最大亮度，255是最大亮度
             brightSeekBar.setMax(100);
            // 取得当前亮度
@@ -520,7 +519,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Intent intent1 = new Intent("com.bs360.syncsettingbri");
                 sendBroadcast(intent1);
-                if (isBrightAuto()){
+                if (false/*isBrightAuto()*/){
 
                     // 取得当前进度
                     int tmpInt = seekBar.getProgress();
@@ -571,7 +570,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
                 // TODO Auto-generated method stub
-                if (isBrightAuto()){
+                if (false/*isBrightAuto()*/){
 
                     // 取得当前进度
                     int tmpInt = progress;
