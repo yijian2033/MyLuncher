@@ -27,7 +27,7 @@ public class MyViewPager extends ViewPager{
 
     public MyViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-//        setPageTransformer(true, new CubeOutTransformer());
+        setPageTransformer(true, new CubeOutTransformer());
     }
 
     @Override

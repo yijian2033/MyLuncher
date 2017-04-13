@@ -47,6 +47,35 @@ public abstract class ABaseTransformer implements PageTransformer {
 		onPreTransform(page, position);
 		onTransform(page, position);
 		onPostTransform(page, position);
+
+		/*if (position <-1){
+
+		}else if (position<=0){
+			page.setPivotX(page.getMeasuredWidth());
+			page.setPivotY(0);
+			page.setScaleX(1+position);
+		}else if (position <=1){
+			page.setPivotX(0);
+			page.setPivotY(0);
+			page.setScaleX(1-position);
+		}else {
+
+		}*/
+
+		/*if (position <-1){
+
+		}else if (position<=0){
+			page.setPivotY(page.getMeasuredWidth()/2);
+			page.setPivotY(page.getMeasuredHeight()/2);
+			page.setRotationX(180*position);
+		}else if (position <=1){
+			page.setPivotY(page.getMeasuredWidth()/2);
+			page.setPivotY(page.getMeasuredHeight()/2);
+			page.setRotationX(180*position);
+		}else {
+
+		}*/
+
 	}
 
 	/**

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -25,9 +26,7 @@ import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.AMapCommonUtils;
 import com.ljw.device3x.Utils.WeatherUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by Administrator on 2017/1/16 0016.
@@ -95,6 +94,17 @@ public class WindowsWeaDatePlugin extends LinearLayout implements AMapLocationLi
             if(action.equals("LOCATION")){
                 Log.i("ljwtestamap", "定时调用定位函数");
                 aMapCommonUtils.startLocation();
+            }if(action.equals(ConnectivityManager.CONNECTIVITY_ACTION)){
+
+                ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo activeInfo = manager.getActiveNetworkInfo();
+
+                if(null!=activeInfo && activeInfo.isConnected()){
+                    aMapCommonUtils.startLocation();
+                }
+
+
             } else if(action.equals("android.intent.action.DATE_CHANGED") || "android.intent.action.TIME_SET".equals(action)) {
                 getAndDisplayDate();
             } else if(action.equals(ACTION_TIMEZONE_CHANGED)) {
@@ -179,6 +189,7 @@ public class WindowsWeaDatePlugin extends LinearLayout implements AMapLocationLi
         filter.addAction("android.intent.action.DATE_CHANGED");
         filter.addAction("android.intent.action.TIME_SET");
         filter.addAction(ACTION_TIMEZONE_CHANGED);
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         context.registerReceiver(alarmReceiver, filter);
 
         if(null != alarm){

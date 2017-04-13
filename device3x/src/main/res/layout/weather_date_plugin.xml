@@ -44,7 +44,15 @@
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 android:text="10月25日 星期四" />
+            <TextClock
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:format24Hour="M月dd日 EEEE" />
             
             <TextView
                 android:layout_width="wrap_content"

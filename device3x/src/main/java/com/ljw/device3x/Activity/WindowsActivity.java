@@ -37,6 +37,7 @@ import com.ljw.device3x.Utils.WeatherUtils;
 import com.ljw.device3x.adapter.ContentFragmentAdapter;
 import com.ljw.device3x.common.CommonBroacastName;
 import com.ljw.device3x.common.CommonCtrl;
+import com.ljw.device3x.customview.CubeOutTransformer;
 import com.ljw.device3x.gpscontrol.MyGpsHardware;
 import com.ljw.device3x.gpscontrol.MyGpsListener;
 import com.ljw.device3x.gpscontrol.MyLocation;
@@ -267,6 +268,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         });*/
 
         verticalViewPager = (ViewPager)findViewById(R.id.vertical_viewpager);
+        verticalViewPager.setPageTransformer(true, new CubeOutTransformer());
         verticalViewPager.setAdapter(new ContentFragmentAdapter.Holder(getSupportFragmentManager())
                 .add(level1_fragment)
                 .add(level2_fragment)
