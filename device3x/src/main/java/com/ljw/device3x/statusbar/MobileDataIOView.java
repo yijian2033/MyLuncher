@@ -58,7 +58,7 @@ public class MobileDataIOView extends ImageView{
         telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
     }
 
-    private static class MobileDataIOViewHandler extends Handler {
+    private  class MobileDataIOViewHandler extends Handler {
         WeakReference<MobileDataIOView> mView;
 
         public MobileDataIOViewHandler(MobileDataIOView view) {
@@ -77,6 +77,7 @@ public class MobileDataIOView extends ImageView{
             else {
                 if(view.getVisibility() == GONE)
                     view.setVisibility(View.VISIBLE);
+                if(telephonyManager.getSimState()!= TelephonyManager.SIM_STATE_READY) view.setVisibility(GONE);
                 view.setImageResource(getIOImage(msg.what));
             }
         }
@@ -117,13 +118,17 @@ public class MobileDataIOView extends ImageView{
 //            }
             else if("com.launcher.changeiofromstrength".equals(action) || ConnectivityManager.CONNECTIVITY_ACTION.equals(action) || WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
                 mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+                Log.e("ljwtest:", action+ " IMAGE_VISIBLE telephonyManager.getDataActivity():" + telephonyManager.getDataActivity());
                 if (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED && Utils.getInstance().getMobileDataStatus()) {
                     Log.e("ljwtest:", "mWifiManager.getWifiState()" + mWifiManager.getWifiState());
                     mobileDataIOViewHandler.sendEmptyMessage(telephonyManager.getDataActivity());
                     Log.e("ljwtest:", "telephonyManager.getDataActivity():" + telephonyManager.getDataActivity());
                 }
-                else
+                else{
+
                     mobileDataIOViewHandler.sendEmptyMessage(IMAGE_VISIBLE);
+                }
+
             }
         }
     };

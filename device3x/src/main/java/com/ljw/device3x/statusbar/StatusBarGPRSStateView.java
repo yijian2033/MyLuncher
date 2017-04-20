@@ -67,11 +67,11 @@ public class StatusBarGPRSStateView extends ImageView {
                 break;
             case TelephonyManager.SIM_STATE_READY:
                 isSimCardExist = true;
-                new Utils().ttsSpeak("SIM卡已插入");
+            //    new Utils().ttsSpeak("SIM卡已插入");
                 break;
             case TelephonyManager.SIM_STATE_ABSENT:
                 isSimCardExist = false;
-                new Utils().ttsSpeak("SIM卡已拔出");
+            //    new Utils().ttsSpeak("SIM卡已拔出");
                 break;
             default:
                 break;
@@ -79,7 +79,9 @@ public class StatusBarGPRSStateView extends ImageView {
         if (!isSimCardExist) {
             mhandler.sendEmptyMessage(-200);
             context.sendBroadcast(new Intent("com.launcher.hidenettype"));
-        }
+            context.sendBroadcast(new Intent("com.launcher.changeiofromstrength"));
+         }
+
     }
 
     private void getMark()//得到当前电话卡的归属运营商

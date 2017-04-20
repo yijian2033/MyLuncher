@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ljw.device3x.R;
+import com.ljw.device3x.Utils.NoDoubleClickListener;
 import com.ljw.device3x.Utils.Utils;
 import com.ljw.device3x.common.AppPackageName;
 import com.ljw.device3x.common.CommonBroacastName;
@@ -39,9 +40,9 @@ public class BluetoothStateView extends LinearLayout {
         textView = (TextView) findViewById(R.id.bluetooth_text);
         imageView.setImageResource(R.mipmap.bluetooth_on);
         textView.setTextColor(context.getResources().getColor(R.color.white));
-        imageView.setOnClickListener(new OnClickListener() {
+        imageView.setOnClickListener(new NoDoubleClickListener(2000) {
             @Override
-            public void onClick(View v) {
+            public void singleClick(View view) {
                 if(bluetoothStatus == BLUETOOTH_ON)
                     closeBluetooth();
                 else

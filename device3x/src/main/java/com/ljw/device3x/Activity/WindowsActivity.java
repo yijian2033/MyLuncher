@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.Utils;
@@ -84,13 +83,13 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     private ImageView quickSetClose;
     private int currentLevelPage = 0;
     private boolean isHomeDrawbleOpen = false;
-
     private StorageManager storageManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         windowsActivity = this;
         setContentView(R.layout.float_window_setting);
+
         initView();
         notifyFMAndBt();
         /**注册监听系统亮度改变事件*/
@@ -112,7 +111,6 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         @Override
         public void onChange(boolean selfChange, Uri uri) {
 //            super.onChange(selfChange, uri);
-            Log.i("guifawei","BrightnessMode change");
             initBrightSeekbar();
         }
     };
@@ -483,6 +481,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     }
 
     private void initBrightSeekbar() {
+        setScreenBrightness();
         brightSeekBar = (SeekBar)headView.findViewById(R.id.brightseekbar);
         brightSeekBar.setOnTouchListener(null);
         brightSeekBar.setOnSeekBarChangeListener(null);
@@ -549,15 +548,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
                     // 根据当前进度改变亮度
                     Settings.System.putInt(getContentResolver(),
                             Settings.System.SCREEN_BRIGHTNESS, tmpInt);
-                    tmpInt = Settings.System.getInt(getContentResolver(),
-                            Settings.System.SCREEN_BRIGHTNESS, -1);
-                    WindowManager.LayoutParams wl = getWindow().getAttributes();
-
-                    float tmpFloat = (float) tmpInt / 255;
-                    if (tmpFloat > 0 && tmpFloat <= 1) {
-                        wl.screenBrightness = tmpFloat;
-                    }
-                    getWindow().setAttributes(wl);
+                    setScreenBrightness();
                 }
 
 
@@ -597,17 +588,10 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
                     }*/
 
                     // 根据当前进度改变亮度
+
                     Settings.System.putInt(getContentResolver(),
                             Settings.System.SCREEN_BRIGHTNESS, tmpInt);
-                    tmpInt = Settings.System.getInt(getContentResolver(),
-                            Settings.System.SCREEN_BRIGHTNESS, -1);
-                    WindowManager.LayoutParams wl = getWindow().getAttributes();
-
-                    float tmpFloat = (float) tmpInt / 255;
-                    if (tmpFloat > 0 && tmpFloat <= 1) {
-                        wl.screenBrightness = tmpFloat;
-                    }
-                    getWindow().setAttributes(wl);
+                    setScreenBrightness();
                 }
 
             }
@@ -620,11 +604,17 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         sendBroadcast(intent);
     }
 
-    private void setScreenBrightness(float b){
+    private void setScreenBrightness(){
         //取得window属性保存在layoutParams中
-        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-        layoutParams.screenBrightness = b;//b已经除以10
-        getWindow().setAttributes(layoutParams);
+       /* int tmpInt = Settings.System.getInt(getContentResolver(),
+                Settings.System.SCREEN_BRIGHTNESS, -1);
+        WindowManager.LayoutParams wl = getWindow().getAttributes();
+
+        float tmpFloat = (float) tmpInt / 255;
+        if (tmpFloat > 0 && tmpFloat <= 1) {
+            wl.screenBrightness = tmpFloat;
+        }
+        getWindow().setAttributes(wl);*/
     }
 
     private void initVoiceSeekbar() {

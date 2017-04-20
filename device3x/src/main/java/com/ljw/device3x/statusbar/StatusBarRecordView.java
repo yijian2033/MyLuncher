@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.ljw.device3x.Activity.DeviceApplication;
 import com.ljw.device3x.R;
 
 import java.lang.ref.WeakReference;
@@ -31,7 +32,7 @@ public class StatusBarRecordView extends ImageView{
 
     private static final int REC_ON = 1;
     private static final int REC_OFF = 0;
-    private static int count = 0;//图片循环计数器
+    private  int count = 0;//图片循环计数器
     private boolean isStop = false;
 
     private RecHandler recHandler;
@@ -40,13 +41,14 @@ public class StatusBarRecordView extends ImageView{
         super(context, attrs);
         recHandler = new RecHandler(this);
         this.context = context;
+        Log.i("gfwtest:", "StatusBarRecordView  构造函数");
     }
 
     public StatusBarRecordView(Context context) {
         this(context, null);
     }
 
-    private static class RecHandler extends Handler {
+    private  class RecHandler extends Handler {
         WeakReference<StatusBarRecordView> mView;
         private RecStartTimerTask recStartTimerTask;
         public Timer recStartTimer;
@@ -97,12 +99,20 @@ public class StatusBarRecordView extends ImageView{
             String action = intent.getAction();
             if(action.equals(DEV_REC_OFF)) {
                 recHandler.sendEmptyMessage(REC_OFF);
+                DeviceApplication.isRecordViewOn = false;
             }
-            else
+            else{
+                DeviceApplication.isRecordViewOn = true;
                 startRecyleRecImg();
+            }
+
 
         }
     };
+
+    public boolean isRecordOn() {
+        return  DeviceApplication.isRecordViewOn;
+    }
 
     @Override
     protected void onAttachedToWindow() {
@@ -110,6 +120,8 @@ public class StatusBarRecordView extends ImageView{
         IntentFilter intentFilter = new IntentFilter(DEV_REC_ON);
         intentFilter.addAction(DEV_REC_OFF);
         context.registerReceiver(recReveive, intentFilter);
+       if (isRecordOn()) startRecyleRecImg();
+
     }
 
     @Override

@@ -74,7 +74,7 @@ public class NetworkTypeView extends ImageView{
                 }
                 break;
                 case -1:
-                    view.setVisibility(INVISIBLE);
+                    view.setVisibility(GONE);
 
             }
         }
@@ -85,7 +85,7 @@ public class NetworkTypeView extends ImageView{
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if("com.private.datanetwork.change".equals(action)) {
-//                Toast.makeText(context, "网络状态已改变", Toast.LENGTH_SHORT).show();
+     //           Toast.makeText(context, "网络状态已改变", Toast.LENGTH_SHORT).show();
                 int type = intent.getIntExtra("datanettype", -1);
                 networkTypeHandler.sendEmptyMessage(getDataNetworkType(type));
 //                setNetworkTypeIcon(type);
@@ -109,6 +109,7 @@ public class NetworkTypeView extends ImageView{
 //            String strSubTypeName = networkInfo.getSubtypeName();
 //            if (null != state) {
                 //                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING) {
+
                 switch (sysDataType) {
                     //如果是2g类型
                     case TelephonyManager.NETWORK_TYPE_GPRS: // 联通2g

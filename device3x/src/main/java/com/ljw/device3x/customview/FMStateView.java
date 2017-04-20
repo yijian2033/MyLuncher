@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ljw.device3x.R;
+import com.ljw.device3x.Utils.NoDoubleClickListener;
 import com.ljw.device3x.Utils.Utils;
 import com.ljw.device3x.common.AppPackageName;
 
@@ -44,6 +46,7 @@ public class FMStateView extends LinearLayout{
      */
     String FM_STATE_IS_OFF = "CloseFMBroadcast";
 
+
     public FMStateView(final Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
@@ -57,9 +60,9 @@ public class FMStateView extends LinearLayout{
         textView = (TextView) findViewById(R.id.fmtext);
         imageView.setImageResource(R.mipmap.fm_off);
         textView.setTextColor(context.getResources().getColor(R.color.dark_text));
-        imageView.setOnClickListener(new OnClickListener() {
+        imageView.setOnClickListener(new NoDoubleClickListener(3500) {
             @Override
-            public void onClick(View v) {
+            public void singleClick(View view) {
                 if(flag == 0) {
                     Intent intent = new Intent(OPEN_FM);
                     context.sendBroadcast(intent);
@@ -72,6 +75,7 @@ public class FMStateView extends LinearLayout{
             }
         });
 
+
         imageView.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -81,6 +85,7 @@ public class FMStateView extends LinearLayout{
             }
         });
     }
+
 
     private BroadcastReceiver changeFMState = new BroadcastReceiver() {
         @Override

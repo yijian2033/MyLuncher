@@ -38,6 +38,7 @@ public class MobileStateView extends LinearLayout {
     private Timer timer;
     private static final int READY_TO_CHANGE_MOBILESTATUS = 0x001;
 
+    private final static String ACTION_SIM_STATE_CHANGED = "android.intent.action.SIM_STATE_CHANGED";
     private static final String NETWORK_CHANGE = "android.intent.action.ANY_DATA_STATE";
     private static final String MY_OPEN_MOBILE = "ljw_open_mibiledata";
     private static final String MY_ASK_MOBILE = "ljw_ask_mibiledata";
@@ -124,7 +125,9 @@ public class MobileStateView extends LinearLayout {
 //            imageView.setImageResource(R.mipmap.mobiledata_on);
 //            textView.setTextColor(context.getResources().getColor(R.color.white));
 //        }
-        boolean mobileDataStatus = getMobileDataStatus();
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        boolean simReady = telephonyManager.getSimState()== TelephonyManager.SIM_STATE_READY;
+        boolean mobileDataStatus = getMobileDataStatus() && simReady;
         imageView.setImageResource(mobileDataStatus ? R.mipmap.mobiledata_on : R.mipmap.mobiledata_off);
         textView.setTextColor(mobileDataStatus ? context.getResources().getColor(R.color.white) : context.getResources().getColor(R.color.dark_text));
 
@@ -140,6 +143,9 @@ public class MobileStateView extends LinearLayout {
                 refreshButton();
             } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
                 Log.i("ljwtestmobile:", "系统通知：移动网络已改变");
+                refreshButton();
+            }else if (ACTION_SIM_STATE_CHANGED.equals(intent.getAction())){
+                Log.i("ljwtestmobile:", "SIM 卡状态发生变化");
                 refreshButton();
             }
         }
@@ -179,6 +185,7 @@ public class MobileStateView extends LinearLayout {
         super.onAttachedToWindow();
         intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.addAction(SYSTEM_MOBILE_STATE);
+        intentFilter.addAction(ACTION_SIM_STATE_CHANGED);
         getContext().registerReceiver(MobileDataRecieve, intentFilter);
     }
 
