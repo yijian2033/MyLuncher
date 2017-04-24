@@ -5,12 +5,10 @@ import android.widget.Toast;
 
 import com.ljw.device3x.Activity.DeviceApplication;
 
-
 /**
- * 为了解决重复点击的问题
+ * ljw：Administrator on 2017/4/24 0024 16:12
  */
-
-public abstract class NoDoubleClickListener implements View.OnClickListener {
+public abstract class FiveClickListener implements View.OnClickListener {
 
 
     private  final String TAG = NoDoubleClickListener.class.getName();
@@ -19,19 +17,26 @@ public abstract class NoDoubleClickListener implements View.OnClickListener {
 
     private long delay;
 
+    private int has_click_times = 0;
+
     public abstract void singleClick(View view);
 
-    public NoDoubleClickListener(long delay) {
+    public FiveClickListener(long delay) {
         this.delay = delay;
     }
 
     @Override
     public void onClick(View v) {
         if (onMoreClick(v)) {
-            Toast.makeText(DeviceApplication.getContext(),"点击间隔时间太短",Toast.LENGTH_SHORT).show();
+            has_click_times++;
+            if (has_click_times == 4)
+                singleClick(v);
             return;
+        }else{
+            has_click_times = 0;
         }
-        singleClick(v);
+
+
     }
 
     public boolean onMoreClick(View view) {
@@ -43,6 +48,8 @@ public abstract class NoDoubleClickListener implements View.OnClickListener {
         lastTime = System.currentTimeMillis();
         return flag;
     }
+
+
 
 
 }

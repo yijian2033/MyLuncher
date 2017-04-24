@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.EdogBrocastIntent;
+import com.ljw.device3x.Utils.FiveClickListener;
 import com.ljw.device3x.Utils.Utils;
 import com.ljw.device3x.adapter.ButtonViewAdapter;
 import com.ljw.device3x.adapter.pagerAdapter;
@@ -75,7 +76,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
 
 
     private int pageNum = 0;//记录页数
-    private static final int totalPage = 2;//一级菜单一共两页
+    private static final int totalPage = 3;//一级菜单一共三页
     private static int FOOT_LEFT = 0;//公路左侧图片切换计数器
     private static int FOOT_RIGHT = 0;//公路右侧图片切换计数器
     private static volatile boolean isRunning = false;//线程停止标志
@@ -115,13 +116,24 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
     /**
      * 一级菜单第二页图标
      */
-    private int[] level_1_second_image = {R.mipmap.btn_fm, R.mipmap.btn_music, R.mipmap.btn_call, R.mipmap.btn_weather, R.mipmap.btn_setting};
+    private int[] level_1_second_image = {R.mipmap.btn_fm, R.mipmap.btn_music, R.mipmap.btn_call};
 
     /**
      * 一级菜单第二页文字图标
      */
 //    private int[] level_1_second_text = {R.mipmap.text_wechat, R.mipmap.text_music, R.mipmap.text_call, R.mipmap.text_weather, R.mipmap.text_setting};
-    private int[] level_1_second_text = {R.string.level_2_fm, R.string.level_2_music, R.string.level_2_phone, R.string.level_2_weather, R.string.level_2_setting};
+    private int[] level_1_second_text = {R.string.level_2_fm, R.string.level_2_music, R.string.level_2_phone};
+
+    /**
+     * 一级菜单第三页图标
+     */
+    private int[] level_1_third_image = { R.mipmap.btn_level2_filemanager, R.mipmap.btn_weather, R.mipmap.btn_setting};
+
+    /**
+     * 一级菜单第三页文字图标
+     */
+//    private int[] level_1_second_text = {R.mipmap.text_wechat, R.mipmap.text_music, R.mipmap.text_call, R.mipmap.text_weather, R.mipmap.text_setting};
+    private int[] level_1_third_text = {R.string.level2_filemanager, R.string.level_2_weather, R.string.level_2_setting};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -305,13 +317,14 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
         naviPoint = (ImageView) view.findViewById(R.id.navi_point);
         openFirstPage = (ImageView) view.findViewById(R.id.manaul_toone);
         openSecondPage = (ImageView) view.findViewById(R.id.manaul_totwo);
-
+        openFirstPage.setVisibility(View.GONE);
+        openSecondPage.setVisibility(View.GONE);
         openFirstPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mViewPager.setCurrentItem(0);
                 openFirstPage.setVisibility(View.GONE);
-                openSecondPage.setVisibility(View.VISIBLE);
+                openSecondPage.setVisibility(View.GONE);
             }
         });
 
@@ -319,8 +332,23 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
             @Override
             public void onClick(View v) {
                 mViewPager.setCurrentItem(1);
-                openFirstPage.setVisibility(View.VISIBLE);
+                openFirstPage.setVisibility(View.GONE);
                 openSecondPage.setVisibility(View.GONE);
+            }
+        });
+        carLayout.setOnClickListener(new FiveClickListener(1000) {
+            @Override
+            public void singleClick(View view) {
+                Toast.makeText(context,"打开测试软件",Toast.LENGTH_LONG).show();
+                try {
+                    Intent intent = new Intent();
+                    intent.setClassName("com.rayee.factorytest","com.rayee.factorytest.MainActivity");
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }catch (Exception e){
+                    Toast.makeText(context,"打开测试软件"+e.getMessage(),Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
             }
         });
         initGridView();
@@ -385,10 +413,13 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
         gridViewList = new ArrayList<GridView>();
         for (int i = 0; i < totalPage; ++i) {
             GridView gv = new GridView(Level1_Fragment.this.getActivity());
-            if (i % totalPage > 0) { //第二页
+            if(i ==2){ //第三页
+                gv.setAdapter(new ButtonViewAdapter(Level1_Fragment.this.getActivity(), level_1_third_image, level_1_third_text, i));
+                gv.setNumColumns(3);
+            }else if (i== 1) { //第二页
                 gv.setAdapter(new ButtonViewAdapter(Level1_Fragment.this.getActivity(), level_1_second_image, level_1_second_text, i));
-                gv.setNumColumns(5);
-            } else {
+                gv.setNumColumns(3);
+            } else if (i== 0){ //第一页
                 gv.setAdapter(new ButtonViewAdapter(Level1_Fragment.this.getActivity(), level_1_first_image, level_1_first_text, i));
                 gv.setNumColumns(3);
             }
@@ -406,6 +437,10 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
                             break;
                         case 1:
                             level2MenuListener(position);
+                            break;
+                        case 2:
+                            level3MenuListener(position);
+                            break;
                     }
                 }
             });
@@ -457,17 +492,29 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
 //                toast("蓝牙电话");
                 openAppAndNotifyHomeChanged(AppPackageName.BLUETOOTH_APP);
                 break;
-            case 3:
+
+        }
+    }
+
+    /**
+     * 监听一级菜单第三页
+     */
+    private void level3MenuListener(int position) {
+        switch (position) {
+            case 0:
+                openAppAndNotifyHomeChanged(AppPackageName.FILE_MANAGER_APP);
+//                toast("导航");
+            break;
+            case 1:
                 openAppAndNotifyHomeChanged(AppPackageName.WEATHER_APP);
 //                toast("天气");
                 break;
-            case 4:
+            case 2:
 //                toast("设置");
                 goToSetting();
                 break;
         }
     }
-
     /**
      * 打开应用并且通知导航栏按钮变换图片
      */
@@ -537,22 +584,30 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
         public void onPageSelected(int arg0) {
             pageNum = arg0;
             if (arg0 == 0) {
-                carLayout.setVisibility(View.VISIBLE);
+              //  carLayout.setVisibility(View.VISIBLE);
                 openFirstPage.setVisibility(View.GONE);
-                openSecondPage.setVisibility(View.VISIBLE);
+                openSecondPage.setVisibility(View.GONE);
                 isLevel1Visible = false;
                 setBtnLayoutWidth(false);
                 naviPoint.setImageResource(R.mipmap.circle_one);
-            }
-            else {
-                carLayout.setVisibility(View.GONE);
-                openFirstPage.setVisibility(View.VISIBLE);
+                Utils.getInstance().notifyHomeChangedIcon(0);
+            }else if(arg0 == 1) {
+              //  carLayout.setVisibility(View.GONE);
+                openFirstPage.setVisibility(View.GONE);
                 openSecondPage.setVisibility(View.GONE);
                 isLevel1Visible = true;
-                setBtnLayoutWidth(true);
+                setBtnLayoutWidth(false);
                 naviPoint.setImageResource(R.mipmap.circle_two);
+                Utils.getInstance().notifyHomeChangedIcon(1);
+            }else if(arg0 == 2){
+                openFirstPage.setVisibility(View.GONE);
+                openSecondPage.setVisibility(View.GONE);
+                isLevel1Visible = true;
+                setBtnLayoutWidth(false);
+                naviPoint.setImageResource(R.mipmap.circle_third);
+                Utils.getInstance().notifyHomeChangedIcon(1);
             }
-            Utils.getInstance().notifyHomeChangedIcon(arg0);
+
         }
 
     }

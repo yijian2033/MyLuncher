@@ -152,6 +152,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
 //        if(currentLevelPage == 0)
 //            Utils.getInstance().notifyHomeChangedIcon(1);
 //        else
+        log_i("launcher onResume");
             Utils.getInstance().notifyHomeChangedIcon(currentLevelPage);
     }
 

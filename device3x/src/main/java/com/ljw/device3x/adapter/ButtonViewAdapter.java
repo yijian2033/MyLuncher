@@ -31,12 +31,12 @@ public class ButtonViewAdapter extends BaseAdapter {
         this.resourceArray = resource;
         this.textViewArray = text;
         mLayoutInflater = LayoutInflater.from(mContext);
-        this.mIndex = page;
+
     }
 
     @Override
     public int getCount() {
-        return mIndex > 0 ? APP_PAGE2_SIZE : APP_PAGE1_SIZE;
+        return 3;
     }
 
     @Override
