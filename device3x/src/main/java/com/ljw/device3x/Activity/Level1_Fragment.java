@@ -127,7 +127,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
     /**
      * 一级菜单第三页图标
      */
-    private int[] level_1_third_image = { R.mipmap.btn_level2_filemanager, R.mipmap.btn_weather, R.mipmap.btn_setting};
+    private int[] level_1_third_image = { R.mipmap.btn_filemanager, R.mipmap.btn_weather, R.mipmap.btn_setting};
 
     /**
      * 一级菜单第三页文字图标
@@ -336,7 +336,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
                 openSecondPage.setVisibility(View.GONE);
             }
         });
-        carLayout.setOnClickListener(new FiveClickListener(1000) {
+       /* carLayout.setOnClickListener(new FiveClickListener(1000) {
             @Override
             public void singleClick(View view) {
                 Toast.makeText(context,"打开测试软件",Toast.LENGTH_LONG).show();
@@ -350,7 +350,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
         initGridView();
         try {
             initViewPager();
@@ -599,6 +599,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
                 setBtnLayoutWidth(false);
                 naviPoint.setImageResource(R.mipmap.circle_two);
                 Utils.getInstance().notifyHomeChangedIcon(1);
+
             }else if(arg0 == 2){
                 openFirstPage.setVisibility(View.GONE);
                 openSecondPage.setVisibility(View.GONE);

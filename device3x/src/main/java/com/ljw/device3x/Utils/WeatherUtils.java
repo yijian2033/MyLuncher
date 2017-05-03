@@ -102,17 +102,22 @@ public class WeatherUtils {
         try {
             Log.i("ljwtestweather", "日期是:" + Utils.formatDate(jsonObject.get("date").toString()));
             JSONObject jsonObject1 = jsonObject.getJSONObject("info");
-            JSONArray jsonArray = jsonObject1.has("day") ? jsonObject1.getJSONArray("day") : jsonObject1.getJSONArray("night");
-            Log.i("ljwtestweather", "天气是:" + jsonArray.get(1).toString());
-            Log.i("ljwtestweather", "温度是:" + jsonArray.get(2).toString());
-            Log.i("ljwtestweather", "风向是:" + jsonArray.get(4).toString());
-            int weatherNumber = getWeatherImg(jsonArray.get(1).toString());
-            String tmp = jsonArray.get(1).toString();
+            JSONArray dayJsonArray = jsonObject1.has("day") ? jsonObject1.getJSONArray("day") : jsonObject1.getJSONArray("night");
+            Log.i("ljwtestweather", "天气是:" + dayJsonArray.get(1).toString());
+            Log.i("ljwtestweather", "温度是:" + dayJsonArray.get(2).toString());
+            Log.i("ljwtestweather", "风向是:" + dayJsonArray.get(4).toString());
+            int weatherNumber = getWeatherImg(dayJsonArray.get(1).toString());
+            String tmp = dayJsonArray.get(1).toString();
+            String day_tmp = dayJsonArray.get(2).toString();
+
+            JSONArray nightJsonArray = jsonObject1.getJSONArray("night");
+            String night_tmp = nightJsonArray.get(2).toString();
+
 
             if(weatherNumber != 0)
                 weatherImg.setImageResource(weatherNumber);
             if(!TextUtils.isEmpty(tmp))
-                tmpValues.setText(tmp);
+                tmpValues.setText(tmp+" "+night_tmp+"-"+day_tmp+"℃");
 
         } catch (JSONException e) {
             Log.i("ljwtestweather","解析错误:" + e.toString());
