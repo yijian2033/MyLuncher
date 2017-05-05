@@ -360,7 +360,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
             e.printStackTrace();
         }
 //        initSensorManager();
-//        startChangeRoadImage();
+        startChangeRoadImage();
     }
 
     /**
@@ -368,36 +368,36 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
      */
     private void startChangeRoadImage() {
         isRunning = false;
-//      changeRoadImage.start();
+      changeRoadImage.start();
     }
 
     /**
      * 公路图片轮播线程
      */
-//   Thread changeRoadImage = new Thread(new Runnable() {
-//
-//        @Override
-//        public void run() {
-//            while (!isRunning) {
-//               try {
-//                    Thread.sleep(300);
-//                   mhandler.post(new Runnable() {
-//
-//                        @Override
-//                        public void run() {
-//                            if (FOOT_LEFT == image_left.length - 1
-//                                    && FOOT_RIGHT == image_left.length - 1)
-//                                FOOT_LEFT = FOOT_RIGHT = 0;
-//                            imageLeft.setImageResource(image_left[FOOT_LEFT++]);
-//                            imageRight.setImageResource(image_right[FOOT_RIGHT++]);
-//                        }
-//                   });
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//               }
-//            }
-//        }
-//    });
+   Thread changeRoadImage = new Thread(new Runnable() {
+
+        @Override
+        public void run() {
+            while (!isRunning) {
+               try {
+                    Thread.sleep(250);
+                   mhandler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (FOOT_LEFT == image_left.length - 1
+                                    && FOOT_RIGHT == image_left.length - 1)
+                                FOOT_LEFT = FOOT_RIGHT = 0;
+                            imageLeft.setImageResource(image_left[FOOT_LEFT++]);
+                            imageRight.setImageResource(image_right[FOOT_RIGHT++]);
+                        }
+                   });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+               }
+            }
+        }
+    });
 
     private android.os.Handler mhandler = new android.os.Handler() {
         @Override

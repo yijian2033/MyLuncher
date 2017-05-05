@@ -78,7 +78,7 @@ public class WindowsWeaDatePlugin extends LinearLayout implements AMapLocationLi
 
 
 
-        findViewById(R.id.weather_plugin).setOnClickListener(listener);
+      //  findViewById(R.id.weather_plugin).setOnClickListener(listener);
         findViewById(R.id.plugin_location).setOnClickListener(listener);
         findViewById(R.id.plugin_weather_container).setOnClickListener(listener);
     }
@@ -89,10 +89,17 @@ public class WindowsWeaDatePlugin extends LinearLayout implements AMapLocationLi
                 case R.id.plugin_location :
                   //  Toast.makeText(context,"更新地址",Toast.LENGTH_SHORT).show();
                     aMapCommonUtils.startLocation();
+                   /* Intent in = new Intent("android.settings.APPLICATION_DEVELOPMENT_SETTINGS");
+                    context.startActivity(in);*/
                     break;
                 case R.id.plugin_weather_container :
                  //   Toast.makeText(context,"更新天气",Toast.LENGTH_SHORT).show();
                     weatherUtils.updateWeatherInfo(DeviceApplication.city);
+                    if(Utils.getInstance().isInstalled(AppPackageName.WEATHER_APP)) {
+                        Utils.getInstance().openApplication(AppPackageName.WEATHER_APP);
+                    }
+                    else
+                        Toast.makeText(context,"请安装指定的应用！",Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.weather_plugin :
                  //   Toast.makeText(context,"打开天气",Toast.LENGTH_SHORT).show();
