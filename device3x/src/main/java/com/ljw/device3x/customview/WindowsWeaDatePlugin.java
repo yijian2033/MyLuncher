@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.sip.SipSession;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -15,16 +16,20 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.ljw.device3x.Activity.DeviceApplication;
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.AMapCommonUtils;
+import com.ljw.device3x.Utils.Utils;
 import com.ljw.device3x.Utils.WeatherUtils;
+import com.ljw.device3x.common.AppPackageName;
 
 import java.util.Calendar;
 
@@ -70,8 +75,39 @@ public class WindowsWeaDatePlugin extends LinearLayout implements AMapLocationLi
         weatherUtils = new WeatherUtils(weather, tmp);
         aMapCommonUtils.startLocation();
         weatherUtils.updateWeatherInfo(DeviceApplication.city);
-    }
 
+
+
+        findViewById(R.id.weather_plugin).setOnClickListener(listener);
+        findViewById(R.id.plugin_location).setOnClickListener(listener);
+        findViewById(R.id.plugin_weather_container).setOnClickListener(listener);
+    }
+    OnClickListener listener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.plugin_location :
+                  //  Toast.makeText(context,"更新地址",Toast.LENGTH_SHORT).show();
+                    aMapCommonUtils.startLocation();
+                    break;
+                case R.id.plugin_weather_container :
+                 //   Toast.makeText(context,"更新天气",Toast.LENGTH_SHORT).show();
+                    weatherUtils.updateWeatherInfo(DeviceApplication.city);
+                    break;
+                case R.id.weather_plugin :
+                 //   Toast.makeText(context,"打开天气",Toast.LENGTH_SHORT).show();
+                    if(Utils.getInstance().isInstalled(AppPackageName.WEATHER_APP)) {
+                        Utils.getInstance().openApplication(AppPackageName.WEATHER_APP);
+                    }
+                    else
+                        Toast.makeText(context,"请安装指定的应用！",Toast.LENGTH_SHORT).show();
+
+                    break;
+
+
+            }
+        }
+    };
     public WindowsWeaDatePlugin(Context context) {
         this(context, null);
     }

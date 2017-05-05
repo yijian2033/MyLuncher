@@ -24,7 +24,9 @@ import java.util.Map;
  */
 
 public class WeatherUtils {
-    private static String weatherUrl = "http://cdn.weather.hao.360.cn/api_weather_info.php?app=hao360&_jsonp=data&code=";//根据城市获取天气信息URL
+    //private static String weatherUrl = "http://cdn.weather.hao.360.cn/api_weather_info.php?app=hao360&_jsonp=data&code=";//根据城市获取天气信息URL
+    private static String weatherUrl = "http://service.envicloud.cn:8082/v2/weatherlive/ZMF3ZWLNDWKXNDKZMZU5ODQ4NZE2/";//根据城市获取天气信息URL
+
     private ImageView weatherImg;
     private TextView tmpValues;
     private Map<String, String> mapAllNameID;
@@ -45,9 +47,9 @@ public class WeatherUtils {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i("ljwtestweather","原始数据:" + responseInfo.result);
-                String weatherinfo = cutJsonString(Utils.unicodeToString(Utils.formatJsonString(responseInfo.result)));
+   //             String weatherinfo = cutJsonString(Utils.unicodeToString(Utils.formatJsonString(responseInfo.result)));
 //                log_i(weatherinfo);
-                parseWeatherInfo(weatherinfo);
+                parseWeatherInfo(responseInfo.result);
             }
 
             @Override
@@ -86,8 +88,9 @@ public class WeatherUtils {
     private JSONObject parseWhichDayForcastInfo(String info, int which) {
         try {
             JSONObject jo = new JSONObject(info);
-            JSONArray ja = jo.getJSONArray("weather");
-            return (JSONObject) ja.get(which);
+          //  JSONArray ja = jo.getJSONArray("weather");
+          //  return (JSONObject) ja.get(which);
+            return  jo;
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -100,24 +103,18 @@ public class WeatherUtils {
         if (jsonObject == null)
             return;
         try {
-            Log.i("ljwtestweather", "日期是:" + Utils.formatDate(jsonObject.get("date").toString()));
-            JSONObject jsonObject1 = jsonObject.getJSONObject("info");
-            JSONArray dayJsonArray = jsonObject1.has("day") ? jsonObject1.getJSONArray("day") : jsonObject1.getJSONArray("night");
-            Log.i("ljwtestweather", "天气是:" + dayJsonArray.get(1).toString());
-            Log.i("ljwtestweather", "温度是:" + dayJsonArray.get(2).toString());
-            Log.i("ljwtestweather", "风向是:" + dayJsonArray.get(4).toString());
-            int weatherNumber = getWeatherImg(dayJsonArray.get(1).toString());
-            String tmp = dayJsonArray.get(1).toString();
-            String day_tmp = dayJsonArray.get(2).toString();
 
-            JSONArray nightJsonArray = jsonObject1.getJSONArray("night");
-            String night_tmp = nightJsonArray.get(2).toString();
+            Log.i("ljwtestweather", "天气是:" + jsonObject.get("phenomena").toString());
+            Log.i("ljwtestweather", "温度是:" + jsonObject.get("temperature").toString());
+            int weatherNumber = getWeatherImg(jsonObject.get("phenomena").toString());
+            String weather = jsonObject.get("phenomena").toString();
+            String tmp = jsonObject.get("temperature").toString();
 
 
             if(weatherNumber != 0)
                 weatherImg.setImageResource(weatherNumber);
             if(!TextUtils.isEmpty(tmp))
-                tmpValues.setText(tmp+" "+night_tmp+"-"+day_tmp+"℃");
+                tmpValues.setText(weather+" "+tmp+"℃");
 
         } catch (JSONException e) {
             Log.i("ljwtestweather","解析错误:" + e.toString());
