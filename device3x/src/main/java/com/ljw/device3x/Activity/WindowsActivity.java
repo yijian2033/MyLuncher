@@ -152,6 +152,8 @@ public class WindowsActivity extends AppCompatActivity {
 //            Utils.getInstance().notifyHomeChangedIcon(1);
 //        else
         log_i("launcher onResume");
+        if (currentLevelPage == 0 && level1_fragment.isLevel1Visible)
+            return;
             Utils.getInstance().notifyHomeChangedIcon(currentLevelPage);
     }
 
