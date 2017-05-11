@@ -10,47 +10,36 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.Message;
-import android.os.SystemClock;
 import android.os.storage.StorageManager;
 import android.provider.Settings;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.SlidingDrawer;
 
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.Utils;
-import com.ljw.device3x.Utils.WeatherUtils;
 import com.ljw.device3x.adapter.ContentFragmentAdapter;
 import com.ljw.device3x.common.CommonBroacastName;
 import com.ljw.device3x.common.CommonCtrl;
 import com.ljw.device3x.customview.CubeOutTransformer;
-import com.ljw.device3x.gpscontrol.MyGpsHardware;
-import com.ljw.device3x.gpscontrol.MyGpsListener;
-import com.ljw.device3x.gpscontrol.MyLocation;
 import com.ljw.device3x.service.LocationService;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import me.kaelaela.verticalviewpager.VerticalViewPager;
-
 /**
  * Created by Administrator on 2016/5/25 0025.
  */
-public class WindowsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class WindowsActivity extends AppCompatActivity {
     private Level1_Fragment level1_fragment;
     private Level2_Fragment level2_fragment;
     private ViewPager verticalViewPager;
@@ -70,12 +59,15 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     private boolean isArmOrSystem = false;
     public static WindowsActivity windowsActivity = null;
     private ConnectivityManager connectivityManager;
-    private NavigationView navigationView;
-    private DrawerLayout drawer;
+   // private NavigationView navigationView;
+  //  private DrawerLayout drawer;
+    private ImageView drawer_handler;
+    LinearLayout drawer_content;
+    private SlidingDrawer slidingDrawer;
     SeekBar brightSeekBar;
     SeekBar voiceSeekbar;
     private ImageView brightAuto;
-    View headView;
+ //   View headView;
     private Timer timer;
     private CloseDrawbleTimer closeDrawbleTimer;
     private CloseDrawbleHandler closeDrawbleHandler;
@@ -84,11 +76,18 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     private int currentLevelPage = 0;
     private boolean isHomeDrawbleOpen = false;
     private StorageManager storageManager;
+
+    private int downX;
+    private int downY;
+    private int tempX;
+    private int viewWidth = 600;
+    private boolean isSilding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         windowsActivity = this;
-        setContentView(R.layout.float_window_setting);
+        setContentView(R.layout.activity_windows);
 
         initView();
         notifyFMAndBt();
@@ -192,37 +191,77 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mRecieve, intentFilter);
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.getBackground().setAlpha(150);
-        headView = navigationView.getHeaderView(0);
-        navigationView.setNavigationItemSelectedListener(this);
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.setDrawerListener(new DrawerLayout.DrawerListener() {
+        slidingDrawer = (SlidingDrawer) findViewById(R.id.sliding_drawer);
+        drawer_content = (LinearLayout) findViewById(R.id.mycontent_s);
+        //  drawer_content.getBackground().setAlpha(150);
+        drawer_content.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                quickSetClose.setImageResource(slideOffset < 1.0 ? R.mipmap.quick_set_arrow : R.mipmap.quick_set_close);
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.i("guifawei","11111111slidingDrawer.getContent()"+event.getAction());
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        downX = tempX = (int) event.getRawX();
+                        downY = (int) event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int moveX = (int) event.getRawX();
+                        //	int deltaX = tempX - moveX;
+                        int deltaX = moveX - tempX;
+                        Log.i("guifawei","ACTION_MOVE.deltaX:"+deltaX +" moveX:"+moveX+" downX:"+downX+" slidingDrawer.getScrollX():"+slidingDrawer.getScrollX());
+                        tempX = moveX;
+                        isSilding = true;
+                       // slidingDrawer.scrollBy(deltaX, 0);
+                        if(slidingDrawer.getScrollX()<=0&&isSilding){
+                            slidingDrawer.scrollBy(deltaX, 0);
+                        }else if (slidingDrawer.getScrollX()>=0 && deltaX<0){
+                            slidingDrawer.scrollBy(deltaX, 0);
+                        }else if (slidingDrawer.getScrollX()>=20 ){
+                            slidingDrawer.scrollTo(0,0);
+                        }else {
+                          //  slidingDrawer.scrollTo(0,0);
+                        }
+
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        isSilding = false;
+
+                        if (slidingDrawer.getScrollX() >= -viewWidth / 2) {
+                            slidingDrawer.scrollTo(0,0);
+                        } else {
+                            slidingDrawer.animateClose();
+                        }
+                        break;
+                }
+
+                return true;
             }
+        });
+        drawer_handler = (ImageView) findViewById(R.id.my_image);
+
+
+        slidingDrawer.setOnDrawerOpenListener( new SlidingDrawer.OnDrawerOpenListener(){
 
             @Override
-            public void onDrawerOpened(View drawerView) {
-//                if(quickSetTip.getVisibility() == View.VISIBLE)
-//                    quickSetTip.setVisibility(View.INVISIBLE);
+            public void onDrawerOpened() {
                 startTimerAfterNaviOpen();
                 isHomeDrawbleOpen = true;
+
+                drawer_handler.setImageResource(R.mipmap.quick_set_close);
+                int delta = slidingDrawer.getScrollX();
+                Log.i("guifawei","scrollOrigin:"+delta);
+                slidingDrawer.scrollBy(-delta,0);
             }
-
+        });
+        slidingDrawer.setOnDrawerCloseListener(new SlidingDrawer.OnDrawerCloseListener() {
             @Override
-            public void onDrawerClosed(View drawerView) {
-//                if(quickSetTip.getVisibility() == View.INVISIBLE)
-//                    quickSetTip.setVisibility(View.VISIBLE);
-
+            public void onDrawerClosed() {
                 if(timer != null && closeDrawbleTimer != null)
                     closeDrawbleTimer.cancel();
                 isHomeDrawbleOpen = false;
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
+                drawer_handler.setImageResource(R.mipmap.quick_set_arrow);
+                int delta = slidingDrawer.getScrollX();
+                slidingDrawer.scrollBy(-delta,0);
             }
         });
 //        quickSetTip = (ImageView) findViewById(R.id.quick_set_tips);
@@ -233,7 +272,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
 //            }
 //        });
 
-        quickSetClose = (ImageView)headView.findViewById(R.id.quick_set_end);
+        quickSetClose = (ImageView)findViewById(R.id.quick_set_end);
         quickSetClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -361,16 +400,16 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
      * 打开快捷菜单
      */
     private void closeHomeDrawble() {
-        if(drawer != null)
-            drawer.closeDrawer(Gravity.LEFT);
+        if(slidingDrawer != null)
+            slidingDrawer.animateOpen();
     }
 
     /**
      * 关闭快捷菜单
      */
     private void openHomeDrawble() {
-        if(drawer != null)
-            drawer.openDrawer(Gravity.LEFT);
+        if(slidingDrawer != null)
+            slidingDrawer.animateClose();
     }
 
     /**
@@ -413,10 +452,6 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
         unregisterReceiver(mRecieve);
     }
 
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        return false;
-    }
 
     /**
      * 接收广播
@@ -483,7 +518,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
 
     private void initBrightSeekbar() {
         setScreenBrightness();
-        brightSeekBar = (SeekBar)headView.findViewById(R.id.brightseekbar);
+        brightSeekBar = (SeekBar)findViewById(R.id.brightseekbar);
         brightSeekBar.setOnTouchListener(null);
         brightSeekBar.setOnSeekBarChangeListener(null);
         if (false/*isBrightAuto()*/){
@@ -619,7 +654,7 @@ public class WindowsActivity extends AppCompatActivity implements NavigationView
     }
 
     private void initVoiceSeekbar() {
-        voiceSeekbar = (SeekBar)headView.findViewById(R.id.voiceseekbar);
+        voiceSeekbar = (SeekBar)findViewById(R.id.voiceseekbar);
         //获取到系统服务
         final AudioManager mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
