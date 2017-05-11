@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -357,5 +358,19 @@ public class Utils {
         Intent tts = new Intent(CommonBroacastName.AIOS_TTS_SPEAK);
         tts.putExtra("text", text);
         mContext.sendBroadcast(tts);
+    }
+
+    /**
+     * 判断网络连接是否可用
+     */
+    public static Boolean isNetworkConnected(Context context) {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (manager != null) {
+            NetworkInfo networkinfo = manager.getActiveNetworkInfo();
+            if (networkinfo != null && networkinfo.isConnected()  && networkinfo.isAvailable()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

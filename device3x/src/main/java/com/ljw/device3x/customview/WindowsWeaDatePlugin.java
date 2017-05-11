@@ -3,14 +3,18 @@ package com.ljw.device3x.customview;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.sip.SipSession;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -24,6 +28,8 @@ import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
+import com.example.showweather.model.db.entities.minimalist.IGetWeatherService;
+import com.example.showweather.model.db.entities.minimalist.WeatherLive;
 import com.ljw.device3x.Activity.DeviceApplication;
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.AMapCommonUtils;
@@ -58,6 +64,20 @@ public class WindowsWeaDatePlugin extends LinearLayout implements AMapLocationLi
     private static final int DATE_CHANGE = 4;
     private static final String ACTION_TIMEZONE_CHANGED = Intent.ACTION_TIME_TICK;//监听时区变化的广播
 
+    private IGetWeatherService aidlServerService;
+    ServiceConnection connection=new ServiceConnection() {
+
+        String content;
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            aidlServerService = IGetWeatherService.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            aidlServerService=null;
+        }
+    };
     public WindowsWeaDatePlugin(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
@@ -74,14 +94,36 @@ public class WindowsWeaDatePlugin extends LinearLayout implements AMapLocationLi
         getAndDisplayDate();
         weatherUtils = new WeatherUtils(weather, tmp);
         aMapCommonUtils.startLocation();
-        weatherUtils.updateWeatherInfo(DeviceApplication.city);
-
-
-
+        Intent intent=new Intent();
+        intent.setClassName("com.example.showweather","com.example.showweather.model.db.entities.minimalist.MyService");
+        context.bindService(intent,connection,context.BIND_AUTO_CREATE);
+        UpdateWeather();
       //  findViewById(R.id.weather_plugin).setOnClickListener(listener);
         findViewById(R.id.plugin_location).setOnClickListener(listener);
         findViewById(R.id.plugin_weather_container).setOnClickListener(listener);
     }
+
+    private void UpdateWeather() {
+        if (Utils.isNetworkConnected(context)){
+            weatherUtils.updateWeatherInfo(DeviceApplication.city);
+        }else {
+            try {
+                if ( aidlServerService != null ){
+                    WeatherLive weatherlive = aidlServerService.getWeatherLive(weatherUtils.getCityCode(DeviceApplication.city));
+                    if (weatherlive != null)
+                        weatherUtils.updateWeatherInfo(weatherlive);
+                    //   else  Toast.makeText(context,"weatherLive == null",Toast.LENGTH_SHORT).show();
+
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }catch (Exception e){
+                //   Toast.makeText(context,"weatherLive "+e.getMessage(),Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+    }
+
     OnClickListener listener = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -94,7 +136,8 @@ public class WindowsWeaDatePlugin extends LinearLayout implements AMapLocationLi
                     break;
                 case R.id.plugin_weather_container :
                  //   Toast.makeText(context,"更新天气",Toast.LENGTH_SHORT).show();
-                    weatherUtils.updateWeatherInfo(DeviceApplication.city);
+                    UpdateWeather();
+
                     if(Utils.getInstance().isInstalled(AppPackageName.WEATHER_APP)) {
                         Utils.getInstance().openApplication(AppPackageName.WEATHER_APP);
                     }
@@ -151,7 +194,7 @@ public class WindowsWeaDatePlugin extends LinearLayout implements AMapLocationLi
             } else if(action.equals("android.intent.action.DATE_CHANGED") || "android.intent.action.TIME_SET".equals(action)) {
                 getAndDisplayDate();
             } else if(action.equals(ACTION_TIMEZONE_CHANGED)) {
-                weatherUtils.updateWeatherInfo(DeviceApplication.city);
+                UpdateWeather();
             }
         }
     };
@@ -240,6 +283,8 @@ public class WindowsWeaDatePlugin extends LinearLayout implements AMapLocationLi
             alarm.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 2*1000,
                     5 * 1000, alarmPi);
         }
+
+
     }
 
     @Override

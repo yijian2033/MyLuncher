@@ -11,6 +11,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
@@ -77,9 +78,9 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
 
     private int pageNum = 0;//记录页数
     private static final int totalPage = 3;//一级菜单一共三页
-    private static int FOOT_LEFT = 0;//公路左侧图片切换计数器
-    private static int FOOT_RIGHT = 0;//公路右侧图片切换计数器
-    private static volatile boolean isRunning = false;//线程停止标志
+    private  int FOOT_LEFT = 0;//公路左侧图片切换计数器
+    private  int FOOT_RIGHT = 0;//公路右侧图片切换计数器
+    private  volatile boolean isRunning = false;//线程停止标志
 
     private SensorManager sm;//系统重力加速度传感器
 
@@ -138,7 +139,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        log_i("onCreateView" + "线程状态" + changeRoadImage.isAlive());
+ //       log_i("onCreateView" + "线程状态" + changeRoadImage.isAlive());
         context = getActivity().getApplicationContext();
         View rootView = inflater.inflate(R.layout.level1_menu, null);
         initData(rootView);
@@ -262,13 +263,13 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
         super.onStart();
         if(isRunning)
             isRunning = false;
-//        log_i("onStart" + "线程状态" + changeRoadImage.isAlive());
+ //       log_i("onStart" + "线程状态" + changeRoadImage.isAlive());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        log_i("onResume" + "线程状态" + changeRoadImage.isAlive());
+ //       log_i("onResume" + "线程状态" + changeRoadImage.isAlive());
         if(isRunning)
             isRunning = false;
 //        sm.registerListener(mySensorEventListener, aSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -284,20 +285,20 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
     @Override
     public void onStop() {
         super.onStop();
-//        log_i("onStop" + "线程状态" + changeRoadImage.isAlive());
+  //      log_i("onStop" + "线程状态" + changeRoadImage.isAlive());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        log_i("onPause" + "线程状态" + changeRoadImage.isAlive());
+ //       log_i("onPause" + "线程状态" + changeRoadImage.isAlive());
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         getActivity().unregisterReceiver(mRecieve);
-//        log_i("onDestroyView" + "线程状态" + changeRoadImage.isAlive());
+  //      log_i("onDestroyView" + "线程状态" + changeRoadImage.isAlive());
     }
 
     /**
@@ -381,6 +382,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
             while (!isRunning) {
                try {
                     Thread.sleep(250);
+
                    mhandler.post(new Runnable() {
 
                         @Override

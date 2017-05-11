@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.showweather.model.db.entities.minimalist.WeatherLive;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -68,6 +69,14 @@ public class WeatherUtils {
         mapAllNameID = nameIDMap.getMapAllNameID();
     }
 
+    /**
+     * 初始化城市代码
+     */
+    public String getCityCode(String cityName) {
+        if (TextUtils.isEmpty(cityName))
+            return mapAllNameID.get("深圳");
+       return mapAllNameID.get(cityName);
+    }
     /**
      * 剪切字符串，这个url返回的JSON数据有个包头没用
      */
@@ -216,4 +225,17 @@ public class WeatherUtils {
         return img;
     }
 
+    public void updateWeatherInfo(WeatherLive weatherlive) {
+        Log.i("ljwtestweather", "天气是:" + weatherlive.getWeather());
+        Log.i("ljwtestweather", "温度是:" + weatherlive.getTemp());
+        int weatherNumber = getWeatherImg(weatherlive.getWeather());
+        String weather = weatherlive.getWeather();
+        String tmp = weatherlive.getTemp();
+
+
+        if(weatherNumber != 0)
+            weatherImg.setImageResource(weatherNumber);
+        if(!TextUtils.isEmpty(tmp))
+            tmpValues.setText(weather+" "+tmp+"℃");
+    }
 }
