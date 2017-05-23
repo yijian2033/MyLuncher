@@ -32,7 +32,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.EdogBrocastIntent;
@@ -73,13 +72,14 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
 
 
 
-    public boolean isLevel1Visible = false;//一级菜单第二页是否显示
+    //private boolean isLevel1Visible = false;//一级菜单第二页是否显示
 
 
     private int pageNum = 0;//记录页数
     private static final int totalPage = 3;//一级菜单一共三页
     private  int FOOT_LEFT = 0;//公路左侧图片切换计数器
     private  int FOOT_RIGHT = 0;//公路右侧图片切换计数器
+
     private  volatile boolean isRunning = false;//线程停止标志
 
     private SensorManager sm;//系统重力加速度传感器
@@ -156,6 +156,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
         edogFilter.addAction(EdogBrocastIntent.ALARM_POINT);
         edogFilter.addAction(EdogBrocastIntent.ALARM_RADAR);
         edogFilter.addAction(EdogBrocastIntent.COLECTION_WARNING);
+        edogFilter.addAction("jumpIfLevel1SecondPageVisible");
         getActivity().registerReceiver(mRecieve, edogFilter);
 
     }
@@ -181,6 +182,10 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
         context.sendBroadcast(intent);
     }
 
+    public boolean isLevel1Visible() {
+        return AppPackageName.isLevel1Visible;
+    }
+
     /**
      * 接收广播
      */
@@ -198,6 +203,8 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
             } else if (EdogBrocastIntent.ALARM_RADAR.equals(action)) {
                 log_i("雷达信息:" + intent.getStringExtra("band") + ","
                         + intent.getStringExtra("level"));
+            }else if ("jumpIfLevel1SecondPageVisible".equals(action)) {
+                jumpIfLevel1SecondPageVisible();
             }
         }
     }
@@ -353,13 +360,14 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
             }
         });*/
         initGridView();
-        try {
+        initViewPager();
+        /*try {
             initViewPager();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (java.lang.InstantiationException e) {
             e.printStackTrace();
-        }
+        }*/
 //        initSensorManager();
         startChangeRoadImage();
     }
@@ -549,7 +557,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
     /**
      * 初始化ViewPager
      */
-    private void initViewPager() throws IllegalAccessException, java.lang.InstantiationException {
+    private void initViewPager() /*throws IllegalAccessException, java.lang.InstantiationException*/ {
 
         mViewPager = new MyViewPager(Level1_Fragment.this.getActivity());
 //        mViewPager.setPageTransformer(false, new TransformerItem(CubeOutTransformer.class).clazz.newInstance());
@@ -589,7 +597,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
               //  carLayout.setVisibility(View.VISIBLE);
                 openFirstPage.setVisibility(View.GONE);
                 openSecondPage.setVisibility(View.GONE);
-                isLevel1Visible = false;
+                AppPackageName.isLevel1Visible = false;
                 setBtnLayoutWidth(false);
                 naviPoint.setImageResource(R.mipmap.circle_one);
                 Utils.getInstance().notifyHomeChangedIcon(0);
@@ -597,7 +605,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
               //  carLayout.setVisibility(View.GONE);
                 openFirstPage.setVisibility(View.GONE);
                 openSecondPage.setVisibility(View.GONE);
-                isLevel1Visible = true;
+                AppPackageName.isLevel1Visible = true;
                 setBtnLayoutWidth(false);
                 naviPoint.setImageResource(R.mipmap.circle_two);
                 Utils.getInstance().notifyHomeChangedIcon(1);
@@ -605,7 +613,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
             }else if(arg0 == 2){
                 openFirstPage.setVisibility(View.GONE);
                 openSecondPage.setVisibility(View.GONE);
-                isLevel1Visible = true;
+                AppPackageName.isLevel1Visible = true;
                 setBtnLayoutWidth(false);
                 naviPoint.setImageResource(R.mipmap.circle_third);
                 Utils.getInstance().notifyHomeChangedIcon(1);
@@ -627,8 +635,17 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
      * 如果点击导航栏时一级菜单第二页在显示的时候跳转到第一页
      */
     public void jumpIfLevel1SecondPageVisible() {
-        if(isLevel1Visible)
+        if (mViewPager != null)
+        mViewPager.setCurrentItem(0);
+       /* if(isLevel1Visible){
+     //       Toast.makeText(context,"mViewPager.setCurrentItem(0)",Toast.LENGTH_SHORT).show();
+            log_i("收到了按键传来的跳转到第0页的广播-->mViewPager.setCurrentItem(0)");
             mViewPager.setCurrentItem(0);
+        }else {
+       //     Toast.makeText(context,"isLevel1Visible == false",Toast.LENGTH_SHORT).show();
+            log_i("收到了按键传来的跳转到第0页的广播-->isLevel1Visible == false");
+        }*/
+
     }
 
     /**
@@ -788,7 +805,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
     }
 
     private void toast(String content) {
-        Toast.makeText(getActivity(), content, Toast.LENGTH_SHORT).show();
+     //   Toast.makeText(getActivity(), content, Toast.LENGTH_SHORT).show();
     }
 
     private void log_i(String s) {

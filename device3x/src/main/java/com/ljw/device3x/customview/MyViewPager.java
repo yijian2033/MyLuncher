@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import java.lang.reflect.Field;
+
 import me.kaelaela.verticalviewpager.transforms.DefaultTransformer;
 
 /**
@@ -28,6 +30,19 @@ public class MyViewPager extends ViewPager{
     public MyViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         setPageTransformer(true, new CubeOutTransformer());
+        try {
+            Field mScroller = null;
+            mScroller = ViewPager.class.getDeclaredField("mScroller");
+            mScroller.setAccessible(true);
+            FixedSpeedScroller scroller = new FixedSpeedScroller( getContext( ) );
+            mScroller.set( this, scroller);
+        }catch(NoSuchFieldException e){
+
+        }catch (IllegalArgumentException e){
+
+        }catch (IllegalAccessException e){
+
+        }
     }
 
     @Override

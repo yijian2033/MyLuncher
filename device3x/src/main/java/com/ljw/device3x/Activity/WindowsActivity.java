@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SlidingDrawer;
+import android.widget.Toast;
 
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.Utils;
@@ -31,8 +32,10 @@ import com.ljw.device3x.adapter.ContentFragmentAdapter;
 import com.ljw.device3x.common.CommonBroacastName;
 import com.ljw.device3x.common.CommonCtrl;
 import com.ljw.device3x.customview.CubeOutTransformer;
+import com.ljw.device3x.customview.FixedSpeedScroller;
 import com.ljw.device3x.service.LocationService;
 
+import java.lang.reflect.Field;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -152,7 +155,8 @@ public class WindowsActivity extends AppCompatActivity {
 //            Utils.getInstance().notifyHomeChangedIcon(1);
 //        else
         log_i("launcher onResume");
-        if (currentLevelPage == 0 && level1_fragment.isLevel1Visible)
+        Settings.System.putInt(getContentResolver(),"IS_KEKPAD_TEST",0);
+        if (currentLevelPage == 0 && level1_fragment.isLevel1Visible())
             return;
             Utils.getInstance().notifyHomeChangedIcon(currentLevelPage);
     }
@@ -309,6 +313,19 @@ public class WindowsActivity extends AppCompatActivity {
 
         verticalViewPager = (ViewPager)findViewById(R.id.vertical_viewpager);
         verticalViewPager.setPageTransformer(true, new CubeOutTransformer());
+        try {
+            Field mScroller = null;
+            mScroller = ViewPager.class.getDeclaredField("mScroller");
+            mScroller.setAccessible(true);
+            FixedSpeedScroller scroller = new FixedSpeedScroller( verticalViewPager.getContext( ) );
+            mScroller.set( verticalViewPager, scroller);
+        }catch(NoSuchFieldException e){
+
+        }catch (IllegalArgumentException e){
+
+        }catch (IllegalAccessException e){
+
+        }
         verticalViewPager.setAdapter(new ContentFragmentAdapter.Holder(getSupportFragmentManager())
                 .add(level1_fragment)
                 .add(level2_fragment)
@@ -373,7 +390,9 @@ public class WindowsActivity extends AppCompatActivity {
     public void jumpToPage1() {
         verticalViewPager.setCurrentItem(0);
         isArmOrSystem = true;
-        level1_fragment.jumpIfLevel1SecondPageVisible();
+     //   level1_fragment.jumpIfLevel1SecondPageVisible();
+        Intent intent = new Intent("jumpIfLevel1SecondPageVisible");
+        sendBroadcast(intent);
     }
 
     /**
@@ -467,13 +486,22 @@ public class WindowsActivity extends AppCompatActivity {
                 int flag = intent.getIntExtra("whichPage", 0);
                 if(flag != 0) {
                     if(flag == 1) {
+                    //   Toast.makeText(context,"收到了按键传来的跳转到第0页的广播",Toast.LENGTH_SHORT).show();
                         log_i("收到了按键传来的跳转到第0页的广播");
-                        if(isHomeDrawbleOpen)
+                        if(isHomeDrawbleOpen){
+                      //      Toast.makeText(context,"收到了按键传来的跳转到第0页的广播-->关闭左滑菜单",Toast.LENGTH_SHORT).show();
+                            log_i("收到了按键传来的跳转到第0页的广播-->关闭左滑菜单");
                             closeHomeDrawble();
-                        else
-                        jumpToPage1();
+                        }
+                        else{
+                       //     Toast.makeText(context,"收到了按键传来的跳转到第0页的广播-->跳转至首页",Toast.LENGTH_SHORT).show();
+                            log_i("收到了按键传来的跳转到第0页的广播-->跳转至首页");
+                            jumpToPage1();
+                        }
+
                     }
                     else {
+                    //    Toast.makeText(context,"收到了按键传来的跳转到第1页的广播",Toast.LENGTH_SHORT).show();
                         log_i("收到了按键传来的跳转到第1页的广播");
                         if(isHomeDrawbleOpen)
                             closeHomeDrawble();
@@ -732,12 +760,16 @@ public class WindowsActivity extends AppCompatActivity {
         if(keyCode == KeyEvent.KEYCODE_BACK) {
             if(isHomeDrawbleOpen) {
                 closeHomeDrawble();
-            } else if(currentLevelPage == 0 && !level1_fragment.isLevel1Visible)
-                return true;
+            } /*else if(currentLevelPage == 0 && !level1_fragment.isLevel1Visible())
+                return true;*/
             else if(currentLevelPage == 1)
                 jumpToPage1();
-            else
-                level1_fragment.jumpIfLevel1SecondPageVisible();
+            else if(currentLevelPage == 0){
+                // level1_fragment.jumpIfLevel1SecondPageVisible();
+                Intent intent = new Intent("jumpIfLevel1SecondPageVisible");
+                sendBroadcast(intent);
+            }
+
         }
 //        return super.onKeyDown(keyCode, event);
         return false;

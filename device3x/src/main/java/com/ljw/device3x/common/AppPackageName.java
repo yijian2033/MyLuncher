@@ -19,4 +19,5 @@ public class AppPackageName {
     public static final String UPDATE_SYSTEM_APP = "com.conqueror.systemupdate";//系统升级
     public static final String FILE_MANAGER_APP = "com.mediatek.filemanager";
     public static final String AIOS_WECHAT = "com.aispeech.aios.wechat"; //aios微信
+    public static  boolean isLevel1Visible = false; //aios微信
 }
