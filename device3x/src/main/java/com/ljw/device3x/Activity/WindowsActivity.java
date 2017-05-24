@@ -340,8 +340,11 @@ public class WindowsActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                Utils.getInstance().notifyHomeChangedIcon(position);
                 currentLevelPage = position;
+                if (position == 0 && level1_fragment.isLevel1Visible())
+                    return;
+                Utils.getInstance().notifyHomeChangedIcon(position);
+
 
 //                if(!isArmOrSystem) {
 //                    Log.i("ljwtest:", "现在是手动滑动到第" + position + "页");
