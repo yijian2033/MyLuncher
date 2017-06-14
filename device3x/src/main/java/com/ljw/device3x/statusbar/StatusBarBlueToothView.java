@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,7 @@ import java.lang.ref.WeakReference;
  * Created by Administrator on 2016/10/8 0008.
  */
 public class StatusBarBlueToothView extends ImageView{
+    public static final String RAYEE_BT_STATE = "rayee_bt_state";
     private static int STATE_ON = BluetoothAdapter.STATE_ON;
     private static int STATE_OFF = BluetoothAdapter.STATE_OFF;
     private BluetoothHandler bluetoothHandler;
@@ -66,7 +68,7 @@ public class StatusBarBlueToothView extends ImageView{
                 view.setVisibility(View.VISIBLE);
                 view.setImageResource(R.mipmap.statusbar_bluetooth);
             }
-
+        //    Settings.System.putInt(view.getContext().getContentResolver(),RAYEE_BT_STATE,msg.what);
 //            view.setImageResource(msg.what == STATE_ON ? R.mipmap.bluetooth_on : R.mipmap.bluetooth_off);
         }
     }
@@ -89,6 +91,17 @@ public class StatusBarBlueToothView extends ImageView{
         intentFilter.addAction(CommonBroacastName.BLUETOOTH_STATUSON);
         intentFilter.addAction(CommonBroacastName.BLUETOOTH_STATUSOFF);
         getContext().registerReceiver(bluetoothReceive, intentFilter);
+        initState();
+    }
+
+    private void initState() {
+        int state = Settings.System.getInt(getContext().getContentResolver(),RAYEE_BT_STATE,0);
+        if(state != 1)
+            setVisibility(View.GONE);
+        else {
+            setVisibility(View.VISIBLE);
+            setImageResource(R.mipmap.statusbar_bluetooth);
+        }
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,7 @@ import java.lang.ref.WeakReference;
  * Created by Administrator on 2016/10/9 0009.
  */
 public class StatusBarEdogView extends ImageView {
+    public static final String RAYEE_EDOG_STATE = "rayee_edog_state";
     private static final String EDOG_STATUS_ON = "com.wanma.action.EDOG_STATUS_ON";
     private static final String EDOG_STATUS_OFF = "com.wanma.action.EDOG_STATUS_OFF";
 
@@ -56,6 +58,8 @@ public class StatusBarEdogView extends ImageView {
                 view.setVisibility(View.VISIBLE);
                 view.setImageResource(R.mipmap.statusbar_edog);
             }
+
+        //    Settings.System.putInt(mView.get().getContext().getContentResolver(),RAYEE_EDOG_STATE,msg.what);
         }
     }
 
@@ -80,6 +84,17 @@ public class StatusBarEdogView extends ImageView {
         IntentFilter intentFilter = new IntentFilter(EDOG_STATUS_ON);
         intentFilter.addAction(EDOG_STATUS_OFF);
         getContext().registerReceiver(edogReceive, intentFilter);
+        initState();
+    }
+
+    private void initState() {
+        int state = Settings.System.getInt(getContext().getContentResolver(),RAYEE_EDOG_STATE,0);
+        if(state != EDOG_ON)
+            setVisibility(View.GONE);
+        else {
+            setVisibility(View.VISIBLE);
+            setImageResource(R.mipmap.statusbar_edog);
+        }
     }
 
     @Override

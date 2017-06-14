@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.ljw.device3x.R;
 
@@ -19,6 +21,7 @@ import java.lang.ref.WeakReference;
  * Created by Administrator on 2016/10/9 0009.
  */
 public class StatusBarRadarView extends ImageView{
+    public static final String RAYEE_RADAR_STATE = "rayee_radar_state";
     private static final String RADAR_STATUS_ON = "com.wanma.action.RADAR_STATUS_ON";
     private static final String RADAR_STATUS_OFF = "com.wanma.action.RADAR_STATUS_OFF";
 
@@ -56,6 +59,8 @@ public class StatusBarRadarView extends ImageView{
                 view.setVisibility(View.VISIBLE);
                 view.setImageResource(R.mipmap.statusbar_radar);
             }
+         //   Toast.makeText(view.getContext(),"RAYEE_RADAR_STATE:"+msg.what,Toast.LENGTH_SHORT).show();
+        //    Settings.System.putInt(view.getContext().getContentResolver(),RAYEE_RADAR_STATE,msg.what);
         }
     }
 
@@ -79,6 +84,18 @@ public class StatusBarRadarView extends ImageView{
         IntentFilter intentFilter = new IntentFilter(RADAR_STATUS_ON);
         intentFilter.addAction(RADAR_STATUS_OFF);
         getContext().registerReceiver(radarReceive, intentFilter);
+        initState();
+    }
+
+    private void initState() {
+        int state = Settings.System.getInt(getContext().getContentResolver(),RAYEE_RADAR_STATE,0);
+      //  Toast.makeText(getContext(),"RAYEE_RADAR_STATE:"+state,Toast.LENGTH_SHORT).show();
+        if(state != RADAR_ON)
+            setVisibility(View.GONE);
+        else {
+            setVisibility(View.VISIBLE);
+            setImageResource(R.mipmap.statusbar_radar);
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.hardware.camera2.params.Face;
 import android.util.Log;
+import android.widget.Toast;
 
 //import common.DumpUtils;
 
@@ -15,7 +16,6 @@ public class DeviceApplication extends Application{
     private static Context mContext;
     public static String city = "";
     public static boolean isNetworkAvailable;
-    public static boolean isRecordViewOn;
     public static Context getContext() {
         if (mContext == null) {
             throw new RuntimeException("Unknown Error");
@@ -27,7 +27,6 @@ public class DeviceApplication extends Application{
         super.onCreate();
         mContext = getApplicationContext();
         isNetworkAvailable = false;
-        isRecordViewOn = false;
 //
 //        DumpUtils.getInstance().initialize(mContext);
 //        DumpUtils.getInstance().setEnabledCacheLog(true);

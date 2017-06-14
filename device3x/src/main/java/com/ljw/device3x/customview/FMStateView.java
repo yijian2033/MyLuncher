@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.ljw.device3x.common.AppPackageName;
  * Created by Administrator on 2016/9/7 0007.
  */
 public class FMStateView extends LinearLayout{
+    public static final String RAYEE_FM_STATE = "rayee_fm_state";
     ImageView imageView;
     TextView textView;
     IntentFilter intentFilter;
@@ -94,9 +96,11 @@ public class FMStateView extends LinearLayout{
             if(FM_STATE_IS_ON.equals(action)) {
                 imageView.setImageResource(R.mipmap.fm_on);
                 textView.setTextColor(context.getResources().getColor(R.color.white));
+             //   Settings.System.putInt(context.getContentResolver(),RAYEE_FM_STATE,1);
             } else {
                 imageView.setImageResource(R.mipmap.fm_off);
                 textView.setTextColor(context.getResources().getColor(R.color.dark_text));
+            //    Settings.System.putInt(context.getContentResolver(),RAYEE_FM_STATE,0);
             }
 
         }
@@ -106,8 +110,19 @@ public class FMStateView extends LinearLayout{
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         context.registerReceiver(changeFMState, intentFilter);
+        initState();
     }
 
+    private void initState() {
+        int state = Settings.System.getInt(getContext().getContentResolver(),RAYEE_FM_STATE,0);
+        if(state == 1) {
+            imageView.setImageResource(R.mipmap.fm_on);
+            textView.setTextColor(context.getResources().getColor(R.color.white));
+        } else {
+            imageView.setImageResource(R.mipmap.fm_off);
+            textView.setTextColor(context.getResources().getColor(R.color.dark_text));
+        }
+    }
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();

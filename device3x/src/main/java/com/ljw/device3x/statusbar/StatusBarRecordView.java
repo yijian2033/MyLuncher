@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.ljw.device3x.Activity.DeviceApplication;
 import com.ljw.device3x.R;
@@ -22,7 +24,7 @@ import java.util.TimerTask;
  */
 
 public class StatusBarRecordView extends ImageView{
-
+    public static final String RAYEE_RECORD_STATE = "DvrRecordState";
     private static final String DEV_REC_ON = "cn.conqueror.action.DVR_REC_ON";//行车记录仪打开
     private static final String DEV_REC_OFF = "cn.conqueror.action.DVR_REC_OFF";//行车记录仪关闭
     private static final int REC_OFF_IMG = R.mipmap.videocamera_off;
@@ -68,8 +70,7 @@ public class StatusBarRecordView extends ImageView{
                 if(recStartTimer != null && recStartTimerTask != null)
                     recStartTimerTask.cancel();
                 view.setImageResource(REC_OFF_IMG);
-            }
-            else {
+            } else {
                 if(count >= REC_ON_IMG.length)
                     count = 0;
                 view.setImageResource(REC_ON_IMG[count++]);
@@ -99,20 +100,19 @@ public class StatusBarRecordView extends ImageView{
             String action = intent.getAction();
             if(action.equals(DEV_REC_OFF)) {
                 recHandler.sendEmptyMessage(REC_OFF);
-                DeviceApplication.isRecordViewOn = false;
-            }
-            else{
-                DeviceApplication.isRecordViewOn = true;
+             //   Toast.makeText(context,"存储录像状态-关闭",Toast.LENGTH_SHORT).show();
+            //    Settings.System.putInt(getContext().getContentResolver(),RAYEE_RECORD_STATE,REC_OFF);
+            } else{
                 startRecyleRecImg();
+             //   Toast.makeText(context,"存储录像状态-打开",Toast.LENGTH_SHORT).show();
+             //   Settings.System.putInt(getContext().getContentResolver(),RAYEE_RECORD_STATE,REC_ON);
             }
 
 
         }
     };
 
-    public boolean isRecordOn() {
-        return  DeviceApplication.isRecordViewOn;
-    }
+
 
     @Override
     protected void onAttachedToWindow() {
@@ -120,8 +120,17 @@ public class StatusBarRecordView extends ImageView{
         IntentFilter intentFilter = new IntentFilter(DEV_REC_ON);
         intentFilter.addAction(DEV_REC_OFF);
         context.registerReceiver(recReveive, intentFilter);
-       if (isRecordOn()) startRecyleRecImg();
+        initState();
+    }
 
+    private void initState() {
+        int state = Settings.System.getInt(getContext().getContentResolver(),RAYEE_RECORD_STATE,-1);
+     //   Toast.makeText(context,"获取录像状态："+state,Toast.LENGTH_SHORT).show();
+        if (state == 0) {
+            recHandler.sendEmptyMessage(state);
+        }else if (state == 1) {
+            startRecyleRecImg();
+        }
     }
 
     @Override

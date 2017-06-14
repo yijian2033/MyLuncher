@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.ljw.device3x.R;
 
@@ -18,6 +20,7 @@ import java.lang.ref.WeakReference;
  * Created by Administrator on 2016/10/9 0009.
  */
 public class StatusBarFMView extends ImageView{
+    public static final String RAYEE_FM_STATE = "rayee_fm_state";
 
     /**
      * 发送打开FM广播
@@ -63,6 +66,8 @@ public class StatusBarFMView extends ImageView{
                 view.setVisibility(View.VISIBLE);
                 view.setImageResource(R.mipmap.statusbar_fm);
             }
+           // Toast.makeText(view.getContext(),"FM_STATE:"+msg.what,Toast.LENGTH_SHORT).show();
+        //    Settings.System.putInt(view.getContext().getContentResolver(),RAYEE_FM_STATE,msg.what);
         }
     }
 
@@ -83,6 +88,18 @@ public class StatusBarFMView extends ImageView{
         IntentFilter intentFilter = new IntentFilter(FM_STATE_IS_ON);
         intentFilter.addAction(FM_STATE_IS_OFF);
         getContext().registerReceiver(FMReceive, intentFilter);
+        initState();
+    }
+
+    private void initState() {
+        int state = Settings.System.getInt(getContext().getContentResolver(),RAYEE_FM_STATE,0);
+       // Toast.makeText(getContext(),"FM_STATE00:"+state,Toast.LENGTH_SHORT).show();
+        if(state != FM_ON)
+            setVisibility(View.GONE);
+        else {
+            setVisibility(View.VISIBLE);
+            setImageResource(R.mipmap.statusbar_fm);
+        }
     }
 
     @Override

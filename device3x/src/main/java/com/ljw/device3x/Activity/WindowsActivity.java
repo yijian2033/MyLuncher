@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
@@ -113,6 +114,9 @@ public class WindowsActivity extends AppCompatActivity {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
 //            super.onChange(selfChange, uri);
+            int normal = Settings.System.getInt(getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS, 255);
+            Log.i("BrightnessTest",selfChange+" Brightness:"+normal);
             initBrightSeekbar();
         }
     };
@@ -684,6 +688,11 @@ public class WindowsActivity extends AppCompatActivity {
             wl.screenBrightness = tmpFloat;
         }
         getWindow().setAttributes(wl);*/
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     private void initVoiceSeekbar() {

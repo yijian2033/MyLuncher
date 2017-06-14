@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -25,6 +26,7 @@ import java.lang.ref.WeakReference;
  */
 
 public class NetworkTypeView extends ImageView{
+    public static final String RAYEE_NETWORK_TYPE_STATE = "rayee_network_type_state";
     private static final int NETWORN_2G = 0;
     private static final int NETWORN_3G = 1;
     private static final int NETWORN_4G = 2;
@@ -43,7 +45,7 @@ public class NetworkTypeView extends ImageView{
         this.context = context;
     }
 
-    private static class NetworkTypeHandler extends Handler {
+    private  class NetworkTypeHandler extends Handler {
         WeakReference<NetworkTypeView> mView;
 
         public NetworkTypeHandler(NetworkTypeView view) {
@@ -75,6 +77,8 @@ public class NetworkTypeView extends ImageView{
                 break;
                 case -1:
                     view.setVisibility(GONE);
+                default:
+                    Settings.System.putInt(context.getContentResolver(),RAYEE_NETWORK_TYPE_STATE,msg.what);
 
             }
         }
@@ -155,6 +159,31 @@ public class NetworkTypeView extends ImageView{
         intentFilter.addAction("com.private.datanetwork.change");
         intentFilter.addAction("com.launcher.hidenettype");
         getContext().registerReceiver(networkTypeReceive, intentFilter);
+        initState();
+    }
+
+    private void initState() {
+        int state = Settings.System.getInt(context.getContentResolver(),RAYEE_NETWORK_TYPE_STATE,-1);
+        switch (state) {
+            case NETWORN_2G: {
+                setVisibility(View.VISIBLE);
+                setImageResource(R.mipmap.stat_sys_network_type_e);
+            }
+            break;
+            case NETWORN_3G: {
+                setVisibility(View.VISIBLE);
+                setImageResource(R.mipmap.stat_sys_network_type_3g);
+            }
+            break;
+            case NETWORN_4G: {
+                setVisibility(View.VISIBLE);
+                setImageResource(R.mipmap.stat_sys_network_type_4g);
+            }
+            break;
+            case -1:
+                setVisibility(GONE);
+
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +24,7 @@ import com.ljw.device3x.common.CommonBroacastName;
  * Created by Administrator on 2016/5/6 0006.
  */
 public class BluetoothStateView extends LinearLayout {
-
+    public static final String RAYEE_BT_STATE = "rayee_bt_state";
     private ImageView imageView;
     Context context;
     TextView textView;
@@ -98,6 +99,22 @@ public class BluetoothStateView extends LinearLayout {
         intentFilter.addAction(CommonBroacastName.BLUETOOTH_STATUSON);
         intentFilter.addAction(CommonBroacastName.BLUETOOTH_STATUSOFF);
         getContext().registerReceiver(bluetoothReceive, intentFilter);
+        initState();
+    }
+
+    private void initState() {
+        int state = Settings.System.getInt(getContext().getContentResolver(),RAYEE_BT_STATE,0);
+        if (state == 1) {
+            Log.i("ljwtest:", "蓝牙打开广播");
+            imageView.setImageResource(R.mipmap.bluetooth_on);
+            textView.setTextColor(context.getResources().getColor(R.color.white));
+            bluetoothStatus = BLUETOOTH_ON;
+        } else if(state == 0) {
+            Log.i("ljwtest:", "蓝牙关闭广播");
+            imageView.setImageResource(R.mipmap.bluetooth_off);
+            textView.setTextColor(context.getResources().getColor(R.color.dark_text));
+            bluetoothStatus = BLUETOOTH_OFF;
+        }
     }
 
     @Override

@@ -1,9 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ljw.device3x"
-    >
+    package="com.ljw.device3x">
+    <!-- 定位权限 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- 用于提高GPS定位速度 -->
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <!-- 网络权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
+    <!-- 蓝牙权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
+    <!-- 读写文件权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+    <!-- 电子狗权限 -->
+    <uses-permission android:name="tk.huayu.edog.ContentProvider.Config" />
+    <uses-permission android:name="tk.huayu.edog.ContentProvider.TravelTrace" />
+
+    <!-- 更改系统设置 -->
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
     <application
         android:name=".Activity.DeviceApplication"
@@ -12,21 +41,23 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/NotitleTheme">
-        <!-- 设置key  android:value="2498afb67e23c42da74ec067a170fe6f"-->
+
+        <!-- 设置key  android:value="2498afb67e23c42da74ec067a170fe6f" -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="d3e332224bc53c366cc7b2633ee106a0"/>
+            android:value="d3e332224bc53c366cc7b2633ee106a0" />
         <!-- 定位需要的服务 -->
-        <service android:name="com.amap.api.location.APSService" >
-        </service>
-        <service android:name="service.SendLogEmailService"
-        android:process="com.ljw.remote">
-        </service>
+        <service android:name="com.amap.api.location.APSService"></service>
+        <service
+            android:name="service.SendLogEmailService"
+            android:process="com.ljw.remote"></service>
+
         <activity
-            android:name="com.ljw.device3x.Activity.WindowsActivity"
+            android:name=".Activity.WindowsActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -34,61 +65,48 @@
         </activity>
 
         <receiver android:name=".Activity.WindowsActivity$UsbBroadCastReceiver">
-            <intent-filter >
-                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
                 <action android:name="android.intent.action.MEDIA_EJECT" />
-                <data android:scheme="file"/>
+
+                <data android:scheme="file" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".receiver.BootReceiver">
             <intent-filter android:priority="1000">
-                <action android:name="com.conqueror.action.jw.CompleteBoot"/>
+                <action android:name="com.conqueror.action.jw.CompleteBoot" />
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
                 <action android:name="com.ljw.getbootvalue" />
             </intent-filter>
         </receiver>
 
-        <!--<activity-->
-            <!--android:name="com.ljw.device3x.Activity.WeatherAcivity"-->
-            <!--android:screenOrientation="landscape">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.TIME_SET" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
+        <!-- <activity -->
+        <!-- android:name="com.ljw.device3x.Activity.WeatherAcivity" -->
+        <!-- android:screenOrientation="landscape"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.TIME_SET" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
 
-        <service android:name="com.ljw.device3x.service.LocationService"></service>
+        <service android:name=".service.LocationService" />
+
+        <receiver
+            android:name=".statusbar.StatusStateReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="com.conqueror.BLUETOOTH_STATUSON" />
+                <action android:name="com.conqueror.BLUETOOTH_STATUSOFF" />
+                <action android:name="com.wanma.action.EDOG_STATUS_ON" />
+                <action android:name="com.wanma.action.EDOG_STATUS_OFF" />
+                <action android:name="OpenFMBroadcast" />
+                <action android:name="CloseFMBroadcast" />
+                <action android:name="com.wanma.action.RADAR_STATUS_ON" />
+                <action android:name="com.wanma.action.RADAR_STATUS_OFF" />
+                <action android:name="cn.conqueror.action.DVR_REC_ON" />
+                <action android:name="cn.conqueror.action.DVR_REC_OFF" />
+            </intent-filter>
+        </receiver>
     </application>
-    <!--定位权限-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!--用于提高GPS定位速度-->
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-    <!--网络权限-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
-    <!--蓝牙权限-->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-
-    <!--读写文件权限-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"></uses-permission>
-    <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-
-    <!--电子狗权限-->
-    <uses-permission android:name="tk.huayu.edog.ContentProvider.Config" />
-    <uses-permission android:name="tk.huayu.edog.ContentProvider.TravelTrace" />
-
-    <!--更改系统设置-->
-    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 </manifest>

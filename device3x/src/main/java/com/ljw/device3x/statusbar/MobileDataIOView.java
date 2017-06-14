@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -25,6 +26,7 @@ import java.lang.ref.WeakReference;
 
 public class MobileDataIOView extends ImageView{
 
+    public static final String RAYEE_MOBILE_DATA_IO_STATE = "rayee_mobile_data_io_state";
     private static final int DATA_ACTIVITY_NONE = R.mipmap.data_none;
     private static final int DATA_ACTIVITY_IN = R.mipmap.data_in;
     private static final int DATA_ACTIVITY_OUT = R.mipmap.data_out;
@@ -80,28 +82,26 @@ public class MobileDataIOView extends ImageView{
                 if(telephonyManager.getSimState()!= TelephonyManager.SIM_STATE_READY) view.setVisibility(GONE);
                 view.setImageResource(getIOImage(msg.what));
             }
+            Settings.System.putInt(context.getContentResolver(),RAYEE_MOBILE_DATA_IO_STATE,msg.what);
         }
-
-        private int getIOImage(int type) {
-            int icon = DATA_ACTIVITY_NONE;
-            switch(type) {
-                case IN:
-                    icon = DATA_ACTIVITY_IN;
-                    break;
-                case OUT:
-                    icon = DATA_ACTIVITY_OUT;
-                    break;
-                case INOUT:
-                    icon = DATA_ACTIVITY_INOUT;
-                    break;
-                default:
-                    break;
-            }
-            return icon;
-        }
-
     }
-
+    private int getIOImage(int type) {
+        int icon = DATA_ACTIVITY_NONE;
+        switch(type) {
+            case IN:
+                icon = DATA_ACTIVITY_IN;
+                break;
+            case OUT:
+                icon = DATA_ACTIVITY_OUT;
+                break;
+            case INOUT:
+                icon = DATA_ACTIVITY_INOUT;
+                break;
+            default:
+                break;
+        }
+        return icon;
+    }
     private BroadcastReceiver MobileDataIOReceive = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -142,6 +142,19 @@ public class MobileDataIOView extends ImageView{
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.addAction("com.launcher.changeiofromstrength");
         context.registerReceiver(MobileDataIOReceive, intentFilter);
+        initState();
+    }
+
+    private void initState() {
+        int state = Settings.System.getInt(context.getContentResolver(),RAYEE_MOBILE_DATA_IO_STATE,10);
+        if(state >= IMAGE_GONE)
+            setVisibility(GONE);
+        else {
+            if(getVisibility() == GONE)
+                setVisibility(View.VISIBLE);
+            if(telephonyManager.getSimState()!= TelephonyManager.SIM_STATE_READY) setVisibility(GONE);
+            setImageResource(getIOImage(state));
+        }
     }
 
     @Override
