@@ -77,10 +77,13 @@ public class NetworkTypeView extends ImageView{
                 break;
                 case -1:
                     view.setVisibility(GONE);
-                default:
-                    Settings.System.putInt(context.getContentResolver(),RAYEE_NETWORK_TYPE_STATE,msg.what);
+                    break;
 
             }
+
+            Settings.System.putInt(context.getContentResolver(),RAYEE_NETWORK_TYPE_STATE,msg.what);
+
+
         }
     }
 
@@ -89,12 +92,16 @@ public class NetworkTypeView extends ImageView{
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if("com.private.datanetwork.change".equals(action)) {
-     //           Toast.makeText(context, "网络状态已改变", Toast.LENGTH_SHORT).show();
+
                 int type = intent.getIntExtra("datanettype", -1);
                 networkTypeHandler.sendEmptyMessage(getDataNetworkType(type));
+   //             Toast.makeText(context, "网络状态已改变 "+type, Toast.LENGTH_SHORT).show();
 //                setNetworkTypeIcon(type);
-            } else if("com.launcher.hidenettype".equals(action))
+            } else if("com.launcher.hidenettype".equals(action)){
                 networkTypeHandler.sendEmptyMessage(-1);//在sim卡拔出后隐藏网络类型图标
+    //            Toast.makeText(context, "网络状态hidenettype ", Toast.LENGTH_SHORT).show();
+            }
+
         }
     };
 

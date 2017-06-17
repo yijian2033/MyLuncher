@@ -28,6 +28,8 @@
     <!-- 电子狗权限 -->
     <uses-permission android:name="tk.huayu.edog.ContentProvider.Config" />
     <uses-permission android:name="tk.huayu.edog.ContentProvider.TravelTrace" />
+    <uses-permission android:name="tk.huayu.edog.WriteProvider" />
+    <uses-permission android:name="tk.huayu.edog.ReadProvider" />
 
     <!-- 更改系统设置 -->
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />

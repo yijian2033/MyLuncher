@@ -123,7 +123,7 @@ public class StatusBarWifiStateView extends ImageView {
                 String wifiName = info.getSSID();
                 Log.e("ljwtest:", "wifi rssi " + info.getRssi() + "wifi名是" + info.getSSID());
 //                if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI)
-                if(!TextUtils.isEmpty(wifiName) || !wifiName.contains("0x"))
+                if(!TextUtils.isEmpty(wifiName) && !wifiName.contains("0x"))
                     mWifiHandler.sendEmptyMessage(level);
             }
         }

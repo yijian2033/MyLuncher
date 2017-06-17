@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
@@ -22,6 +24,11 @@ import java.lang.ref.WeakReference;
  */
 public class StatusBarRadarView extends ImageView{
     public static final String RAYEE_RADAR_STATE = "rayee_radar_state";
+
+    private static final String CTRL_EDOG = "ctrlEdog";
+    private static final String CTRL_RD = "ctrlRd";
+    private static final Uri CTRL_URI = Uri.parse("content://tk.huayu.edog.WriteProvider/Control");
+
     private static final String RADAR_STATUS_ON = "com.wanma.action.RADAR_STATUS_ON";
     private static final String RADAR_STATUS_OFF = "com.wanma.action.RADAR_STATUS_OFF";
 
@@ -88,7 +95,14 @@ public class StatusBarRadarView extends ImageView{
     }
 
     private void initState() {
-        int state = Settings.System.getInt(getContext().getContentResolver(),RAYEE_RADAR_STATE,0);
+        int state = 0;
+        String[] columns = new String[]{CTRL_EDOG, CTRL_RD};
+        Cursor cursor = getContext().getContentResolver().query(CTRL_URI, columns, null, null, null);
+        if ((null != cursor) && (cursor.moveToFirst())) {
+            state = cursor.getInt(cursor.getColumnIndex(CTRL_RD)) ;
+            cursor.close();
+        }
+      //  int state = Settings.System.getInt(getContext().getContentResolver(),RAYEE_RADAR_STATE,0);
       //  Toast.makeText(getContext(),"RAYEE_RADAR_STATE:"+state,Toast.LENGTH_SHORT).show();
         if(state != RADAR_ON)
             setVisibility(View.GONE);

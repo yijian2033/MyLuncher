@@ -138,11 +138,11 @@ public class StatusBarGPRSStateView extends ImageView {
                 if (msg.what >= -96)
                     view.setImageResource(R.mipmap.gprs_4);
                 else if (msg.what >= -106)
-                    view.setImageResource(R.mipmap.gprs_4);
+                    view.setImageResource(R.mipmap.gprs_3);
                 else if (msg.what >= -116)
-                    view.setImageResource(R.mipmap.gprs_4);
+                    view.setImageResource(R.mipmap.gprs_2);
                 else if (msg.what >= -999)
-                    view.setImageResource(R.mipmap.gprs_4);
+                    view.setImageResource(R.mipmap.gprs_1);
             } else
                 view.setImageResource(R.mipmap.gprs_none);
 
