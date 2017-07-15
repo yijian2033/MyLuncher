@@ -2,6 +2,7 @@ package com.ljw.device3x.gpscontrol;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -9,6 +10,8 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.ljw.device3x.Activity.DeviceApplication;
 
 
 public class MyGpsHardware {
@@ -32,6 +35,10 @@ public class MyGpsHardware {
             //locationManager = null;
         	//return false; // 这里不要返回false，这种情况下应该做成当用户打开gps后就自动监听gps，而不要重新打开
 //        	Toast.makeText(context, "请先开启gps", Toast.LENGTH_LONG).show();
+            DeviceApplication.GPSState = 0;
+            Intent intent = new Intent("com.rayee.openGPSSettings");
+            context.sendBroadcast(intent);
+
         }
 
         this.listener = listener;
@@ -74,6 +81,7 @@ public class MyGpsHardware {
          */
         public void onLocationChanged(Location location) {
             Log.d("ljwtestgps", "gps回调");
+            DeviceApplication.GPSState = 2;
             MyLocation myLocation = new MyLocation();
             myLocation.lat    = location.getLatitude();
             myLocation.lon    = location.getLongitude();
@@ -112,6 +120,7 @@ public class MyGpsHardware {
          * GPS开启时触发
          */
         public void onProviderEnabled(String provider) {
+            DeviceApplication.GPSState = 1;
 //            Location location = locationManager.getLastKnownLocation(provider);
 //            if(location==null) // 测试发现刚打开GPS的时候有可能为null
 //                return;
@@ -125,6 +134,7 @@ public class MyGpsHardware {
          * GPS禁用时触发
          */
         public void onProviderDisabled(String provider) {
+            DeviceApplication.GPSState = 0;
         }
     };
 

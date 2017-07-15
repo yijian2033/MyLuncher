@@ -36,6 +36,10 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+
     <application
         android:name=".Activity.DeviceApplication"
         android:allowBackup="true"
@@ -79,6 +83,7 @@
                 <action android:name="com.conqueror.action.jw.CompleteBoot" />
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
                 <action android:name="com.ljw.getbootvalue" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 

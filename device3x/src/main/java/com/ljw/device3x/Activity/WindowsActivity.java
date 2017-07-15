@@ -26,7 +26,9 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SlidingDrawer;
 import android.widget.Toast;
+//import android.widget.Toast;
 
+import com.lidroid.xutils.view.annotation.event.OnProgressChanged;
 import com.ljw.device3x.R;
 import com.ljw.device3x.Utils.Utils;
 import com.ljw.device3x.adapter.ContentFragmentAdapter;
@@ -34,6 +36,7 @@ import com.ljw.device3x.common.CommonBroacastName;
 import com.ljw.device3x.common.CommonCtrl;
 import com.ljw.device3x.customview.CubeOutTransformer;
 import com.ljw.device3x.customview.FixedSpeedScroller;
+import com.ljw.device3x.customview.ScrollTransformer;
 import com.ljw.device3x.service.LocationService;
 
 import java.lang.reflect.Field;
@@ -80,12 +83,13 @@ public class WindowsActivity extends AppCompatActivity {
     private int currentLevelPage = 0;
     private boolean isHomeDrawbleOpen = false;
     private StorageManager storageManager;
-
+    private ImageView brightness_down,brightness_raise,voice_down,voice_raise;
     private int downX;
     private int downY;
     private int tempX;
     private int viewWidth = 600;
     private boolean isSilding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -261,6 +265,8 @@ public class WindowsActivity extends AppCompatActivity {
                 int delta = slidingDrawer.getScrollX();
                 Log.i("guifawei","scrollOrigin:"+delta);
                 slidingDrawer.scrollBy(-delta,0);
+                initBrightSeekbar();
+                initVoiceSeekbar(1);
             }
         });
         slidingDrawer.setOnDrawerCloseListener(new SlidingDrawer.OnDrawerCloseListener() {
@@ -369,10 +375,133 @@ public class WindowsActivity extends AppCompatActivity {
 
         closeDrawbleHandler = new CloseDrawbleHandler();
         timer = new Timer(true);
-        initVoiceSeekbar();
+        brightness_down = (ImageView) findViewById(R.id.brightness_down);
+        brightness_raise = (ImageView) findViewById(R.id.brightness_raise);
+        voice_down = (ImageView) findViewById(R.id.voice_down);
+        voice_raise = (ImageView) findViewById(R.id.voice_raise);
+        brightness_raise.setOnClickListener(lll);
+        brightness_down.setOnClickListener(lll);
+        voice_raise.setOnClickListener(lll);
+        voice_down.setOnClickListener(lll);
+        initVoiceSeekbar(1);
         initBrightSeekbar();
     }
+    private View.OnClickListener lll = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.brightness_down:
+                    int currentBrightness1 = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0)+ 51;
+                    Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, 0);//设置屏幕亮度调节方式为手动模式
 
+                    if (currentBrightness1 >255) {
+                        //亮度调大最大
+                        currentBrightness1 = 255;
+                    }
+                    currentBrightness1 = currentBrightness1 / 51;
+                    Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, currentBrightness1 * 51);//设置亮度值
+
+                  //  sendBroadcast(new Intent("com.bs360.syncsettingbri"));
+                  //  sendBroadcast(new Intent("com.aios.displaybrightess"));
+                    break;
+                case R.id.brightness_raise:
+                    int currentBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0)- 51;
+                    Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, 0);//设置屏幕亮度调节方式为手动模式
+
+                    if (currentBrightness < 51) {
+                        //亮度调大最大
+                        currentBrightness = 0;
+                    }
+                    currentBrightness = currentBrightness / 51;
+                    Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, currentBrightness * 51);//设置亮度值
+
+                  //  sendBroadcast(new Intent("com.bs360.syncsettingbri"));
+                  //  sendBroadcast(new Intent("com.aios.displaybrightess"));
+                    break;
+                case R.id.voice_raise:
+                    final AudioManager mAudioManager1 = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                    if (mAudioManager1.isStreamMute(AudioManager.STREAM_MUSIC)) {
+                        sendBroadcast(new Intent("com.bs360.setstreamunmute"));
+                    }else {
+                        int currentVolume1 = mAudioManager1.getStreamVolume(AudioManager.STREAM_ALARM) / 3;
+                        currentVolume1++;
+                        if (currentVolume1 > 5) currentVolume1 = 5;
+                        mAudioManager1.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                                AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND
+                                        | AudioManager.FLAG_SHOW_UI);
+                        mAudioManager1.adjustStreamVolume(AudioManager.STREAM_ALARM,
+                                AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND
+                                        | AudioManager.FLAG_SHOW_UI);
+                        mAudioManager1.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume1 * 3, AudioManager.FLAG_PLAY_SOUND);
+                        mAudioManager1.setStreamVolume(AudioManager.STREAM_ALARM, currentVolume1 * 3, AudioManager.FLAG_PLAY_SOUND);
+                        syncAIOSVol(currentVolume1 * 3);
+                    }
+
+
+                    /*final AudioManager mAudioManager1 = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                        Toast.makeText(getApplicationContext(),"3"+mAudioManager1.isStreamMute(AudioManager.STREAM_MUSIC)+mAudioManager1.getStreamVolume(AudioManager.STREAM_MUSIC),Toast.LENGTH_SHORT).show();
+
+
+                    if (mAudioManager1.isStreamMute(AudioManager.STREAM_MUSIC)){
+                        sendBroadcast(new Intent("com.bs360.setstreamunmute"));
+                        mAudioManager1.setStreamMute(AudioManager.STREAM_MUSIC, false);
+                        mAudioManager1.setStreamMute(AudioManager.STREAM_MUSIC, false);
+                        mAudioManager1.setStreamMute(AudioManager.STREAM_ALARM, false);
+                        mAudioManager1.setStreamMute(AudioManager.STREAM_SYSTEM, false);
+                        mAudioManager1.setStreamMute(AudioManager.STREAM_DTMF, false);
+                        mAudioManager1.setStreamMute(AudioManager.STREAM_RING, false);
+                        mAudioManager1.setStreamVolume(AudioManager.STREAM_ALARM,3,0);
+                        break;
+                    }
+                    mAudioManager1.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE,
+                            AudioManager.FX_FOCUS_NAVIGATION_UP);
+                    final int curvolume1 = mAudioManager1.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    mAudioManager1.setStreamVolume(AudioManager.STREAM_ALARM,curvolume1,0);
+                    syncAIOSVol(curvolume1);*/
+                    break;
+                case R.id.voice_down:
+                    final AudioManager mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                    if (mAudioManager.isStreamMute(AudioManager.STREAM_MUSIC)) {
+                        sendBroadcast(new Intent("com.bs360.setstreamunmute"));
+                    }else {
+                        int currentVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM)/3;
+                        --currentVolume;
+                        if (currentVolume <= 0) currentVolume = 0;
+                        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                                AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND
+                                        | AudioManager.FLAG_SHOW_UI);
+                        mAudioManager.adjustStreamVolume(AudioManager.STREAM_ALARM,
+                                AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND
+                                        | AudioManager.FLAG_SHOW_UI);
+                        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume * 3, AudioManager.FLAG_PLAY_SOUND);
+                        mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, currentVolume * 3, AudioManager.FLAG_PLAY_SOUND);
+                        syncAIOSVol(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+                    }
+
+
+                    /*final AudioManager mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                    Toast.makeText(getApplicationContext(),"3"+mAudioManager.isStreamMute(AudioManager.STREAM_MUSIC)+mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC),Toast.LENGTH_SHORT).show();
+
+                    if (mAudioManager.isStreamMute(AudioManager.STREAM_MUSIC)){
+                        sendBroadcast(new Intent("com.bs360.setstreamunmute"));
+                        mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+                        mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+                        mAudioManager.setStreamMute(AudioManager.STREAM_ALARM, false);
+                        mAudioManager.setStreamMute(AudioManager.STREAM_SYSTEM, false);
+                        mAudioManager.setStreamMute(AudioManager.STREAM_DTMF, false);
+                        mAudioManager.setStreamMute(AudioManager.STREAM_RING, false);
+                        mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM,3,0);
+                        break;
+                    }
+                    mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER,
+                            AudioManager.FX_FOCUS_NAVIGATION_UP);
+                    final int curvolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM,curvolume,0);
+                    syncAIOSVol(curvolume);*/
+                    break;
+            }
+        }
+    };
     private void upDateBrightAutoImg() {
 
        boolean mAutomatic = isBrightAuto();
@@ -523,7 +652,24 @@ public class WindowsActivity extends AppCompatActivity {
                 Log.i("ljwtest:", "收到的地图是" + intent.getStringExtra("maptype"));
                 Utils.setLocalMapType(intent.getStringExtra("maptype"), getApplicationContext());
             } else if(action.equals("android.media.VOLUME_CHANGED_ACTION") || action.equals("com.bs360.synclaunchervol")) {
-               initVoiceSeekbar();
+                if (intent.getIntExtra("isMute",0)==1){
+                    initVoiceSeekbar(1);
+                    closeDrawbleHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            initVoiceSeekbar(1);
+                        }
+                    },1500);
+                }else {
+
+                    initVoiceSeekbar(0);
+                    closeDrawbleHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            initVoiceSeekbar(0);
+                        }
+                    },1500);
+                }
             } else if(action.equals("com.bs360.synclauncherbri") || action.equals("com.bs360.brichangefromspeech")) {
                 initBrightSeekbar();
             } else if(action.equals("com.aios.closequickset")) {
@@ -654,14 +800,14 @@ public class WindowsActivity extends AppCompatActivity {
                 }else {
                     // 取得当前进度
                     int tmpInt = 255-progress;
-                    Log.i("guifawei","setOnSeekBarChangeListener---onProgressChanged--!isBrightAuto"+tmpInt);
+                    Log.i("guifawei","setOnSeekBarChangeListener---onProgressChanged--!isBrightAuto"+tmpInt+fromUser);
                     // 当进度小于80时，设置成80，防止太黑看不见的后果。
                     /*if (tmpInt < 20) {
                         tmpInt = 20;
                     }*/
 
                     // 根据当前进度改变亮度
-
+                    if (fromUser)
                     Settings.System.putInt(getContentResolver(),
                             Settings.System.SCREEN_BRIGHTNESS, tmpInt);
                     setScreenBrightness();
@@ -695,12 +841,19 @@ public class WindowsActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
     }
 
-    private void initVoiceSeekbar() {
+    private void initVoiceSeekbar(int type) {
         voiceSeekbar = (SeekBar)findViewById(R.id.voiceseekbar);
+        voiceSeekbar.setOnTouchListener(null);
+        voiceSeekbar.setOnSeekBarChangeListener(null);
         //获取到系统服务
         final AudioManager mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        final int curvolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int curvolume = mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM);
+        if (type == 1){
+            curvolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        }
+        Log.i("ljwvolumetest", "curvolume："+curvolume+"  isStreamMute:"+mAudioManager.isStreamMute(AudioManager.STREAM_MUSIC));
+       // Toast.makeText(WindowsActivity.this,"curvolume："+curvolume+"  isStreamMute:"+mAudioManager.isStreamMute(AudioManager.STREAM_MUSIC),Toast.LENGTH_SHORT).show();
         voiceSeekbar.setMax(maxVolume);
         voiceSeekbar.setProgress(curvolume);
         voiceSeekbar.setOnTouchListener(new View.OnTouchListener() {
@@ -717,9 +870,26 @@ public class WindowsActivity extends AppCompatActivity {
                 // TODO Auto-generated method stub
                 Intent intent1 = new Intent("com.bs360.syncsettingvol");
                 sendBroadcast(intent1);
-
+             //   Toast.makeText(WindowsActivity.this,"onStopTrackingTouch",Toast.LENGTH_SHORT).show();
                 int syncValue = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
                 syncAIOSVol(syncValue);
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                // TODO Auto-generated method stub
+                if (fromUser){
+                  //  Toast.makeText(WindowsActivity.this,fromUser+"action:"+fromUser,Toast.LENGTH_SHORT).show();
+                    mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+                    mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM , progress, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION , arg1, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_RING , arg1, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM , arg1, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL , arg1, 0);
+//                mAudioManager.setStreamVolume(AudioManager.STREAM_DTMF , arg1, 0);
+                    voiceSeekbar.setProgress(progress);
+                }
             }
 
             @Override
@@ -728,20 +898,9 @@ public class WindowsActivity extends AppCompatActivity {
 //                if(mAudioManager.isStreamMute(AudioManager.STREAM_MUSIC)) {
 //                    Log.i("ljwvolumetest", "当前媒体音已静音");
                     mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+                if(mAudioManager.isStreamMute(AudioManager.STREAM_MUSIC))
+                    sendBroadcast(new Intent("com.bs360.setstreamunmute"));
 //                }
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
-                // TODO Auto-generated method stub
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, arg1, 0);
-                mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM , arg1, 0);
-//                mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION , arg1, 0);
-//                mAudioManager.setStreamVolume(AudioManager.STREAM_RING , arg1, 0);
-//                mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM , arg1, 0);
-//                mAudioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL , arg1, 0);
-//                mAudioManager.setStreamVolume(AudioManager.STREAM_DTMF , arg1, 0);
-                voiceSeekbar.setProgress(arg1);
             }
         });
     }

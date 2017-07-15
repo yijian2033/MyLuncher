@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/black"
     android:layout_marginTop="20dp">
@@ -211,21 +212,34 @@
             <!--</ScrollView>-->
         </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_marginLeft="150dp"
         android:layout_marginTop="10dp"
         android:layout_below="@id/main">
-
         <ImageView
             android:id="@+id/navi_point"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@mipmap/circle_one"
-            />
-    </LinearLayout>
+            android:visibility="invisible" />
+        <com.ljw.device3x.customview.BezierBannerDot
+            android:id="@+id/bd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:selectedRaduis="8dp"
+            app:unSelectedRaduis="7dp"
+            app:selectedColor="#FF78CAF2"
+            app:unSelectedColor="#ffC7C7C7"
+            app:spacing="12dp"
+            android:layout_alignParentBottom="true" />
+
+
+    </FrameLayout>
 
 
 </RelativeLayout>

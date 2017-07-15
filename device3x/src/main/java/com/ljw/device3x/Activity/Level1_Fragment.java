@@ -41,6 +41,7 @@ import com.ljw.device3x.adapter.ButtonViewAdapter;
 import com.ljw.device3x.adapter.pagerAdapter;
 import com.ljw.device3x.common.AppPackageName;
 import com.ljw.device3x.common.CommonCtrl;
+import com.ljw.device3x.customview.BezierBannerDot;
 import com.ljw.device3x.customview.CubeOutTransformer;
 import com.ljw.device3x.customview.MyViewPager;
 import com.ljw.device3x.gpscontrol.MyGpsHardware;
@@ -62,6 +63,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
     private LinearLayout pagerLayout, carLayout, limitlayout, btnLayout;//ViewPager
     private MyViewPager mViewPager;
     private pagerAdapter pa;//滑动的ViewPager
+    private BezierBannerDot bezierBannerDot;
     private ImageView imageLeft, imageRight, naviPoint;//公路两侧
     private TextView directionText;//方向
     private TextView speed;//GPS速度
@@ -157,6 +159,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
         edogFilter.addAction(EdogBrocastIntent.ALARM_RADAR);
         edogFilter.addAction(EdogBrocastIntent.COLECTION_WARNING);
         edogFilter.addAction("jumpIfLevel1SecondPageVisible");
+        edogFilter.addAction("open_cn.conqueror.dvr");
         getActivity().registerReceiver(mRecieve, edogFilter);
 
     }
@@ -205,6 +208,8 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
                         + intent.getStringExtra("level"));
             }else if ("jumpIfLevel1SecondPageVisible".equals(action)) {
                 jumpIfLevel1SecondPageVisible();
+            }else if ("open_cn.conqueror.dvr".equals(action)){
+                openAppAndNotifyHomeChanged(AppPackageName.AUTORECORD_APP);
             }
         }
     }
@@ -323,6 +328,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
         btnLayout = (LinearLayout) view.findViewById(R.id.viewpagerparent);
         speed = (TextView) view.findViewById(R.id.speed);
         naviPoint = (ImageView) view.findViewById(R.id.navi_point);
+        bezierBannerDot = (BezierBannerDot) view.findViewById(R.id.bd);
         openFirstPage = (ImageView) view.findViewById(R.id.manaul_toone);
         openSecondPage = (ImageView) view.findViewById(R.id.manaul_totwo);
         openFirstPage.setVisibility(View.GONE);
@@ -476,6 +482,12 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
                 break;
             case 1:
                 openAppAndNotifyHomeChanged(AppPackageName.AUTORECORD_APP);
+             //   context.sendBroadcast(new Intent("com.ljw.restartpresenter"));
+              //  context.sendBroadcast(new Intent("com.boway.tackscreenshots"));
+              //  Intent intent = new Intent("acyion_my_wifisetting");
+              //  intent.putExtra("index",1);
+              //  intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              //  context.startActivity(intent);
 //                toast("行车记录");
                 break;
             case 2:
@@ -560,13 +572,14 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
     private void initViewPager() /*throws IllegalAccessException, java.lang.InstantiationException*/ {
 
         mViewPager = new MyViewPager(Level1_Fragment.this.getActivity());
-//        mViewPager.setPageTransformer(false, new TransformerItem(CubeOutTransformer.class).clazz.newInstance());
         mViewPager.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mViewPager.setOnPageChangeListener(new MyOnPageChanger());
         pa = new pagerAdapter(this, gridViewList);
         mViewPager.setAdapter(pa);
         pagerLayout.addView(mViewPager);
         setBtnLayoutWidth(false);
+
+        bezierBannerDot.attachToViewpager(mViewPager);
     }
 
     /**

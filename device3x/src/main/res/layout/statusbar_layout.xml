@@ -91,5 +91,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"/>
+    <com.ljw.device3x.statusbar.StatusBarGPSStateView
+        android:src="@mipmap/gps"
+        android:id="@+id/status_bar_gps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"/>
 
 </LinearLayout>

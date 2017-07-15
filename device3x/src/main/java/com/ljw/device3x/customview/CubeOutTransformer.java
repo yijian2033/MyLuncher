@@ -41,6 +41,13 @@ public class CubeOutTransformer extends ABaseTransformer {
 		}
 
 	}*/
+
+	/**
+	 * 方块动画
+	 * @param view
+	 * @param position
+	 *            Position of page relative to the current front-and-center position of the pager. 0 is front and
+     */
 	@Override
 	protected void onTransform(View view, float position) {
 
@@ -53,6 +60,30 @@ public class CubeOutTransformer extends ABaseTransformer {
 		}
 		view.setPivotY(view.getHeight() * 0.5f);
 		view.setRotationY(90f * position);
+
+	}
+
+	/**
+	 * 滚筒动画
+	 * @param view
+	 * @param position
+	 *            Position of page relative to the current front-and-center position of the pager. 0 is front and
+     */
+	//@Override
+	protected void onTransform1(View view, float position) {
+		if (position <= 0f) {
+			view.setTranslationX(view.getWidth() * -position);
+			view.setPivotX(view.getWidth()*0.5f);
+			view.setPivotY(view.getHeight()*0.5f);
+			view.setRotationY(90.0f * position);
+			view.setAlpha(1 + position);
+		} else if (position <= 1f) {
+			view.setTranslationX(view.getWidth() * -position);
+			view.setPivotX(view.getWidth() * 0.5f);
+			view.setPivotY(view.getHeight() * 0.5f);
+			view.setRotationY(90.0f * position);
+			view.setAlpha(1 - position);
+		}
 	}
 
 
