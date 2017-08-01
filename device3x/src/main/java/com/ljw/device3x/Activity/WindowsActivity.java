@@ -390,7 +390,7 @@ public class WindowsActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             switch (v.getId()){
-                case R.id.brightness_down:
+                case R.id.brightness_raise:
                     int currentBrightness1 = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0)+ 51;
                     Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, 0);//设置屏幕亮度调节方式为手动模式
 
@@ -404,7 +404,7 @@ public class WindowsActivity extends AppCompatActivity {
                   //  sendBroadcast(new Intent("com.bs360.syncsettingbri"));
                   //  sendBroadcast(new Intent("com.aios.displaybrightess"));
                     break;
-                case R.id.brightness_raise:
+                case R.id.brightness_down:
                     int currentBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0)- 51;
                     Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, 0);//设置屏幕亮度调节方式为手动模式
 
@@ -720,7 +720,8 @@ public class WindowsActivity extends AppCompatActivity {
             int normal = Settings.System.getInt(getContentResolver(),
                     Settings.System.SCREEN_BRIGHTNESS, 255);
             // 进度条绑定当前亮度
-            brightSeekBar.setProgress(255-normal);
+         //   brightSeekBar.setProgress(255-normal);
+            brightSeekBar.setProgress(normal);
             Log.i("guifawei","initBrightSeekbar---!isBrightAuto--normal"+normal);
         }
 
@@ -756,7 +757,8 @@ public class WindowsActivity extends AppCompatActivity {
                     Log.i("guifawei","setOnSeekBarChangeListener---onStopTrackingTouch--isBrightAuto"+tmpInt);
                 }else{
                     // 取得当前进度
-                    int tmpInt = 255-seekBar.getProgress();
+                  //  int tmpInt = 255-seekBar.getProgress();
+                    int tmpInt = seekBar.getProgress();
                     Log.i("guifawei","setOnSeekBarChangeListener---onStopTrackingTouch--!isBrightAuto"+tmpInt);
                     // 当进度小于80时，设置成80，防止太黑看不见的后果。
                    /* if (tmpInt < 20) {
@@ -799,7 +801,8 @@ public class WindowsActivity extends AppCompatActivity {
                     Log.i("guifawei","setOnSeekBarChangeListener---onProgressChanged--isBrightAuto"+tmpInt);
                 }else {
                     // 取得当前进度
-                    int tmpInt = 255-progress;
+                   // int tmpInt = 255-progress;
+                    int tmpInt = progress;
                     Log.i("guifawei","setOnSeekBarChangeListener---onProgressChanged--!isBrightAuto"+tmpInt+fromUser);
                     // 当进度小于80时，设置成80，防止太黑看不见的后果。
                     /*if (tmpInt < 20) {
