@@ -434,6 +434,7 @@ public class WindowsActivity extends AppCompatActivity {
                                         | AudioManager.FLAG_SHOW_UI);
                         mAudioManager1.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume1 * 3, AudioManager.FLAG_PLAY_SOUND);
                         mAudioManager1.setStreamVolume(AudioManager.STREAM_ALARM, currentVolume1 * 3, AudioManager.FLAG_PLAY_SOUND);
+                        mAudioManager1.setStreamVolume(AudioManager.STREAM_SYSTEM, currentVolume1 * 3, AudioManager.FLAG_PLAY_SOUND);
                         syncAIOSVol(currentVolume1 * 3);
                     }
 
@@ -475,6 +476,7 @@ public class WindowsActivity extends AppCompatActivity {
                                         | AudioManager.FLAG_SHOW_UI);
                         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume * 3, AudioManager.FLAG_PLAY_SOUND);
                         mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, currentVolume * 3, AudioManager.FLAG_PLAY_SOUND);
+                        mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, currentVolume * 3, AudioManager.FLAG_PLAY_SOUND);
                         syncAIOSVol(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
                     }
 
@@ -886,6 +888,7 @@ public class WindowsActivity extends AppCompatActivity {
                   //  Toast.makeText(WindowsActivity.this,fromUser+"action:"+fromUser,Toast.LENGTH_SHORT).show();
                     mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
                     mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM , progress, 0);
+                    mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM , progress, 0);
 //                mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION , arg1, 0);
 //                mAudioManager.setStreamVolume(AudioManager.STREAM_RING , arg1, 0);
 //                mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM , arg1, 0);

@@ -114,7 +114,8 @@ public class Level2_Fragment extends Fragment {
                         break;
                     case 6: {
                         Intent intent=new Intent(CommonBroacastName.JUMP_TO_SYSTEM_DEVICE_INFO);
-                        getActivity().sendBroadcast(intent);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getActivity().startActivity(intent);
                     }
 //                        toast("关于设备");
 //                        openWifi();
