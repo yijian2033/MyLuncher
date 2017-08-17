@@ -78,7 +78,12 @@ public class WifiApSateView extends LinearLayout{
 
     // wifi热点开关
     public boolean setWifiApEnabled(boolean enabled) {
-        if (enabled) { // disable WiFi in any case
+        //发送广播至Setting中开关热点
+        Intent intent = new Intent("com.conqueror.action.switchwifiap");
+        intent.putExtra("enable",enabled);
+        getContext().sendBroadcast(intent);
+        return true;
+        /*if (enabled) { // disable WiFi in any case
             //wifi和热点不能同时打开，所以打开热点的时候需要关闭wifi
             wifiManager.setWifiEnabled(false);
         }
@@ -92,7 +97,7 @@ public class WifiApSateView extends LinearLayout{
             return (Boolean) method.invoke(wifiManager, apConfig, enabled);
         } catch (Exception e) {
             return false;
-        }
+        }*/
     }
 
     private BroadcastReceiver wifiApReceive = new BroadcastReceiver() {
