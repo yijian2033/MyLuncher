@@ -31,7 +31,8 @@ public class BootReceiver extends BroadcastReceiver{
             int ALARM_curvolume = mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM);
             int MUSIC_curvolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             Log.i("ljwtestboottest", "ALARM_curvolume "+ALARM_curvolume+"  MUSIC_curvolume "+MUSIC_curvolume);
-            if (ALARM_curvolume != MUSIC_curvolume ){
+            if (ALARM_curvolume != MUSIC_curvolume && MUSIC_curvolume != 0){
+                Log.i("testSetVolume","setStreamVolume3: "+MUSIC_curvolume);
                 mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM,MUSIC_curvolume,0);
             }
 
@@ -42,7 +43,8 @@ public class BootReceiver extends BroadcastReceiver{
                     int ALARM_curvolume = mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM);
                     int MUSIC_curvolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
                     Log.i("ljwtestboottest", "ALARM_curvolume "+ALARM_curvolume+"  MUSIC_curvolume "+MUSIC_curvolume);
-                    if (ALARM_curvolume != MUSIC_curvolume){
+                    if (ALARM_curvolume != MUSIC_curvolume && MUSIC_curvolume != 0){
+                        Log.i("testSetVolume","setStreamVolume4: "+MUSIC_curvolume);
                         mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM,MUSIC_curvolume,0);
                     }
                 }
