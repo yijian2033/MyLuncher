@@ -89,7 +89,7 @@ public class BezierBannerDot extends View implements ViewPager.OnPageChangeListe
     public static int DIRECTION_LEFT = 1;
     //向左滑 向右滚动
     public static int DIRECTION_RIGHT = 2;
-    private static final String TAG="tag";
+    private static final String TAG="BezierBannerDot";
 
     Interpolator accelerateinterpolator = new AccelerateDecelerateInterpolator();
 
@@ -214,7 +214,7 @@ public class BezierBannerDot extends View implements ViewPager.OnPageChangeListe
         //viewpager滑动完毕返回的0不需要，拦截掉
         if (progress == 0) {
             Log.d(TAG, "拦截");
-            return;
+           // return;
         }
         mOriginProgress = progress;
         if (progress <= 0.5) {
@@ -231,7 +231,7 @@ public class BezierBannerDot extends View implements ViewPager.OnPageChangeListe
             moveToPrivous();
         }
         invalidate();
-        Log.d(TAG, "刷新");
+        Log.d(TAG, "刷新"+progress);
 
 
     }
@@ -504,7 +504,8 @@ public class BezierBannerDot extends View implements ViewPager.OnPageChangeListe
         //偏移量为0 说明运动停止
         if (positionOffset == 0) {
             mSelectedIndex = position;
-            Log.d("tag", "到达");
+            Log.d(TAG, "到达");
+            setProgress(0f);
             resetProgress();
         }
         //向左滑，指示器向右移动
@@ -517,6 +518,7 @@ public class BezierBannerDot extends View implements ViewPager.OnPageChangeListe
             } else {
                 setProgress(positionOffset);
             }
+            Log.d(TAG, "DIRECTION_RIGHT"+" position:"+position+" positionOffset:"+positionOffset+" positionOffsetPixels:"+positionOffsetPixels);
         } else if (position + positionOffset - mSelectedIndex < 0) { //向右滑，指示器向左移动
             mDrection = DIRECTION_LEFT;
             //向右快速滑动
@@ -526,18 +528,19 @@ public class BezierBannerDot extends View implements ViewPager.OnPageChangeListe
             } else {
                 setProgress(1 - positionOffset);
             }
+            Log.d(TAG, "DIRECTION_LEFT"+" position:"+position+" positionOffset:"+positionOffset+" positionOffsetPixels:"+positionOffsetPixels);
         }
 
     }
 
     @Override
     public void onPageSelected(int position) {
-
+        Log.e(TAG, "onPageSelected:"+position);
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
+        Log.e(TAG, "onPageScrollStateChanged:"+state);
     }
 
 }
