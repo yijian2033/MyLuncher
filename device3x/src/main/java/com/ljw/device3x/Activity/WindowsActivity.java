@@ -12,7 +12,9 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.os.storage.StorageManager;
 import android.provider.Settings;
 import android.support.v4.view.ViewPager;
@@ -432,6 +434,7 @@ public class WindowsActivity extends AppCompatActivity {
                         mAudioManager1.adjustStreamVolume(AudioManager.STREAM_ALARM,
                                 AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND
                                         | AudioManager.FLAG_SHOW_UI);
+                        Log.i("testSetVolume","setStreamVolume1: "+currentVolume1 * 3);
                         mAudioManager1.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume1 * 3, AudioManager.FLAG_PLAY_SOUND);
                         mAudioManager1.setStreamVolume(AudioManager.STREAM_ALARM, currentVolume1 * 3, AudioManager.FLAG_PLAY_SOUND);
                         mAudioManager1.setStreamVolume(AudioManager.STREAM_SYSTEM, currentVolume1 * 3, AudioManager.FLAG_PLAY_SOUND);
@@ -474,6 +477,7 @@ public class WindowsActivity extends AppCompatActivity {
                         mAudioManager.adjustStreamVolume(AudioManager.STREAM_ALARM,
                                 AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND
                                         | AudioManager.FLAG_SHOW_UI);
+                        Log.i("testSetVolume","setStreamVolume2: "+currentVolume * 3);
                         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume * 3, AudioManager.FLAG_PLAY_SOUND);
                         mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, currentVolume * 3, AudioManager.FLAG_PLAY_SOUND);
                         mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, currentVolume * 3, AudioManager.FLAG_PLAY_SOUND);
@@ -886,6 +890,7 @@ public class WindowsActivity extends AppCompatActivity {
                 // TODO Auto-generated method stub
                 if (fromUser){
                   //  Toast.makeText(WindowsActivity.this,fromUser+"action:"+fromUser,Toast.LENGTH_SHORT).show();
+                    Log.i("testSetVolume","setStreamVolume0: "+progress);
                     mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
                     mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM , progress, 0);
                     mAudioManager.setStreamVolume(AudioManager.STREAM_SYSTEM , progress, 0);
@@ -903,6 +908,7 @@ public class WindowsActivity extends AppCompatActivity {
                 Log.i("ljwvolumetest", "onStartTrackingTouch");
 //                if(mAudioManager.isStreamMute(AudioManager.STREAM_MUSIC)) {
 //                    Log.i("ljwvolumetest", "当前媒体音已静音");
+                    Log.i("testSetVolume","setStreamMute5: "+false);
                     mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
                 if(mAudioManager.isStreamMute(AudioManager.STREAM_MUSIC))
                     sendBroadcast(new Intent("com.bs360.setstreamunmute"));
@@ -951,5 +957,17 @@ public class WindowsActivity extends AppCompatActivity {
 //        return super.onKeyDown(keyCode, event);
         return false;
     }
+
+    private Handler mHandler = new Handler();
+    private Runnable updateTimeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (System.currentTimeMillis()<1503986915816l){
+                Utils.writeLog("/storage/sdcard0/testTimeSetting.txt","Launcher 发送自动更新时间广播");
+                autoSetTimeAfterNetworkIsOk();
+                mHandler.postDelayed(this,5*1000);
+            }
+        }
+    };
 
 }

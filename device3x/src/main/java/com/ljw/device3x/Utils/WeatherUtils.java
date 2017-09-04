@@ -122,9 +122,11 @@ public class WeatherUtils {
 
             if(weatherNumber != 0)
                 weatherImg.setImageResource(weatherNumber);
-            if(!TextUtils.isEmpty(tmp))
-                tmpValues.setText(weather+" "+tmp+"℃");
-
+            if(!TextUtils.isEmpty(tmp)) {
+                if (tmp.contains("."))
+                    tmp = tmp.substring(0,tmp.indexOf("."));
+                tmpValues.setText(weather + " " + tmp + "℃");
+            }
         } catch (JSONException e) {
             Log.i("ljwtestweather","解析错误:" + e.toString());
             e.printStackTrace();
@@ -236,6 +238,8 @@ public class WeatherUtils {
         if(weatherNumber != 0)
             weatherImg.setImageResource(weatherNumber);
         if(!TextUtils.isEmpty(tmp))
+            if (tmp.contains("."))
+                tmp = tmp.substring(0,tmp.indexOf("."));
             tmpValues.setText(weather+" "+tmp+"℃");
     }
 }

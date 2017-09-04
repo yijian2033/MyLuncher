@@ -169,7 +169,7 @@ public class Level1_Fragment extends Fragment implements MyGpsListener{
 //        toast("Gps回调");
         long currentTime = location.time;
         if(!CommonCtrl.isFirstSystemTimeSet) {
-            if(!DeviceApplication.isNetworkAvailable && currentTime / 1000 < Integer.MAX_VALUE) {
+            if(/*!DeviceApplication.isNetworkAvailable &&*/ currentTime / 1000 < Integer.MAX_VALUE) {
 //                SystemClock.setCurrentTimeMillis(currentTime);
                 sendGpsMillsToSettings(currentTime);
                 Log.d("ljwtestgps", "GPS时间设置到系统成功");

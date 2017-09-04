@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
@@ -118,8 +119,17 @@ public class MobileDataIOView extends ImageView{
 //            }
             else if("com.launcher.changeiofromstrength".equals(action) || ConnectivityManager.CONNECTIVITY_ACTION.equals(action) || WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
                 mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-                Log.e("ljwtest:", action+ " IMAGE_VISIBLE telephonyManager.getDataActivity():" + telephonyManager.getDataActivity());
-                if (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_DISABLED && Utils.getInstance().getMobileDataStatus()) {
+                ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkinfo = connectivityManager.getActiveNetworkInfo();
+                Log.e("ljwtest:", action+" IMAGE_VISIBLE telephonyManager.getDataActivity():" + telephonyManager.getDataActivity());
+                if (networkinfo != null
+                        && (networkinfo.getType()==ConnectivityManager.TYPE_MOBILE
+                        || networkinfo.getType()==ConnectivityManager.TYPE_MOBILE_DUN
+                        || networkinfo.getType()==ConnectivityManager.TYPE_MOBILE_HIPRI
+                        || networkinfo.getType()==ConnectivityManager.TYPE_MOBILE_MMS
+                        || networkinfo.getType()==ConnectivityManager.TYPE_MOBILE_SUPL)
+                        && Utils.getInstance().getMobileDataStatus()) {
+
                     Log.e("ljwtest:", "mWifiManager.getWifiState()" + mWifiManager.getWifiState());
                     mobileDataIOViewHandler.sendEmptyMessage(telephonyManager.getDataActivity());
                     Log.e("ljwtest:", "telephonyManager.getDataActivity():" + telephonyManager.getDataActivity());

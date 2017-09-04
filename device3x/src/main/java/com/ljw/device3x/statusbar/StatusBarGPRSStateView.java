@@ -77,9 +77,15 @@ public class StatusBarGPRSStateView extends ImageView {
                 break;
         }
         if (!isSimCardExist) {
-            mhandler.sendEmptyMessage(-200);
-            context.sendBroadcast(new Intent("com.launcher.hidenettype"));
-            context.sendBroadcast(new Intent("com.launcher.changeiofromstrength"));
+            mhandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mhandler.sendEmptyMessage(-200);
+                    context.sendBroadcast(new Intent("com.launcher.hidenettype"));
+                    context.sendBroadcast(new Intent("com.launcher.changeiofromstrength"));
+                }
+            },200);
+
          }
 
     }
@@ -210,6 +216,7 @@ public class StatusBarGPRSStateView extends ImageView {
                 Log.i("ljwtest:", "sim卡状态有改变");
             } else if (action.equals("com.launcher.signalupdate")) {
                 int signalStrength = intent.getIntExtra("signalstrength", -1);
+                Log.i("ljwtest:", "收到的信号强度是:" + signalStrength);
                 if (signalStrength != -1) {
                     Log.i("ljwtest:", "收到的信号强度是:" + signalStrength);
                     mhandler.sendEmptyMessage(signalStrength);

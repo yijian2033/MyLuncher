@@ -97,9 +97,11 @@ public class NetworkTypeView extends ImageView{
                 networkTypeHandler.sendEmptyMessage(getDataNetworkType(type));
    //             Toast.makeText(context, "网络状态已改变 "+type, Toast.LENGTH_SHORT).show();
 //                setNetworkTypeIcon(type);
+                Log.d("ljwtest:","网络状态已改变 "+type);
             } else if("com.launcher.hidenettype".equals(action)){
                 networkTypeHandler.sendEmptyMessage(-1);//在sim卡拔出后隐藏网络类型图标
     //            Toast.makeText(context, "网络状态hidenettype ", Toast.LENGTH_SHORT).show();
+                Log.d("ljwtest:","网络状态hidenettype ");
             }
 
         }

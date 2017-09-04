@@ -8,13 +8,16 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.ljw.device3x.Activity.DeviceApplication;
 import com.ljw.device3x.common.CommonBroacastName;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -372,5 +375,26 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    public static  void writeLog(String path, String log){
+        try{
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path, true));
+            String date = getDate();
+            bufferedWriter.write(date);
+            bufferedWriter.write(log);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+    private static String getDate() {
+        long time = System.currentTimeMillis();//long now = android.os.SystemClock.uptimeMillis();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd-HH:mm:ss:SSS");
+        Date d1 = new Date(time);
+        return "[ " + format.format(d1) + " ]";
     }
 }
