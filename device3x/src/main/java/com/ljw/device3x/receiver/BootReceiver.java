@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,7 +37,7 @@ public class BootReceiver extends BroadcastReceiver{
                 mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM,MUSIC_curvolume,0);
             }
 
-            Handler mha = new Handler();
+            Handler mha = new Handler(Looper.getMainLooper());
             mha.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -49,9 +50,30 @@ public class BootReceiver extends BroadcastReceiver{
                     }
                 }
             },3000);
+            mha.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent2 = new Intent("AUTONAVI_STANDARD_BROADCAST_RECV");
+                    intent2.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+                    intent2.putExtra("KEY_TYPE",10064);
+                    intent2.putExtra("EXTRA_TYPE", 2);
+                    intent2.putExtra("EXTRA_OPERA", 1);
+                    context.sendBroadcast(intent2);
+                }
+            },4000);
         } else if(action.equals("com.ljw.getbootvalue")) {
             Log.i("ljwtestboottest", "开机设置值是" + Utils.getBoot(context));
         }else if (action.equals(Intent.ACTION_BOOT_COMPLETED)){
+
+        }else if (action.equals("com.conqueror.action.MainMapActivityStarted")){
+            Intent intent2 = new Intent("AUTONAVI_STANDARD_BROADCAST_RECV");
+            intent2.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            intent2.putExtra("KEY_TYPE",10064);
+            intent2.putExtra("EXTRA_TYPE", 2);
+            intent2.putExtra("EXTRA_OPERA", 1);
+            context.sendBroadcast(intent2);
+
+
 
         }
     }

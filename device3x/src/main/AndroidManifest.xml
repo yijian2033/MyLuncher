@@ -84,6 +84,7 @@
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
                 <action android:name="com.ljw.getbootvalue" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="com.conqueror.action.MainMapActivityStarted"/>
             </intent-filter>
         </receiver>
 
