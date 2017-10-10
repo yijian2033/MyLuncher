@@ -1,6 +1,8 @@
 package com.ljw.device3x.statusbar;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
@@ -41,6 +43,7 @@ public class StatusBarGPSStateView  extends ImageView{
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         startRecyleRecImg();
+        context.registerReceiver(reciver,new IntentFilter(Intent.ACTION_TIME_CHANGED));
     }
 
 
@@ -50,6 +53,7 @@ public class StatusBarGPSStateView  extends ImageView{
         super.onDetachedFromWindow();
         if(recStartTimer != null && recStartTimerTask != null)
             recStartTimerTask.cancel();
+        context.unregisterReceiver(reciver);
     }
     private void startRecyleRecImg() { //当行车记录仪打开时打开图片切换
         if(recStartTimer != null && recStartTimerTask != null)
@@ -67,7 +71,12 @@ public class StatusBarGPSStateView  extends ImageView{
 
     }
 
-
+    private BroadcastReceiver reciver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startRecyleRecImg();
+        }
+    };
     private class GPSHandler extends Handler {
         WeakReference<StatusBarGPSStateView> mView;
         private RecStartTimerTask recStartTimerTask;

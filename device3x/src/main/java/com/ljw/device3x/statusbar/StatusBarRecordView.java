@@ -110,13 +110,15 @@ public class StatusBarRecordView extends ImageView {
         resolver.registerContentObserver(STATE_URI, true, observer);
 
         initState();
+        context.registerReceiver(reciver,new IntentFilter(Intent.ACTION_TIME_CHANGED));
     }
 
     private void initState() {
         ContentResolver resolver = context.getContentResolver();
         Cursor cursor = resolver.query(STATE_URI, null, null, null, null);
-        if (cursor.moveToFirst()) {
+        if (cursor!=null && cursor.moveToFirst()) {
             int state = cursor.getInt(cursor.getColumnIndex("state"));
+            cursor.close();
             Log.i(TAG, "recordState change:"+state);
             if (state == 0){
                 recHandler.sendEmptyMessage(REC_OFF);
@@ -131,8 +133,15 @@ public class StatusBarRecordView extends ImageView {
         super.onDetachedFromWindow();
        ContentResolver resolver = context.getContentResolver();
         resolver.unregisterContentObserver(observer);
+        context.unregisterReceiver(reciver);
     }
 
+    private BroadcastReceiver reciver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            initState();
+        }
+    };
 
     private ContentObserver observer = new ContentObserver(new Handler()) {
 
@@ -143,8 +152,9 @@ public class StatusBarRecordView extends ImageView {
             // select * from person order by id desc limit 1 // 取得最近插入的值（序号大——>小并取第一个）
             ContentResolver resolver = getContext().getContentResolver();
             Cursor cursor = resolver.query(STATE_URI, null, null, null, null);
-            if (cursor.moveToFirst()) {
+            if (cursor!=null && cursor.moveToFirst()) {
                 int state = cursor.getInt(cursor.getColumnIndex("state"));
+                cursor.close();
                 Log.i(TAG, "recordState change:"+state);
                 if (state == 0){
                     recHandler.sendEmptyMessage(REC_OFF);
