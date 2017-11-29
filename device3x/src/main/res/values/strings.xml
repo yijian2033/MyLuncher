@@ -35,4 +35,11 @@
     <string name="level2_weather">Weather</string>
     <string name="level2_filemanager">File Manager</string>
     <string name="level2_warn">Warning</string>
+    <string name="voicewakeup">VoiceWakeup</string>
+    <string name="cellular_networks">Networks</string>
+    <string name="fm">FM</string>
+    <string name="portable_hotspot">Hotspot</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="beijing_time">Beijing Time</string>
+    <string name="format24Hour">MM/dd EEEE</string>
 </resources>

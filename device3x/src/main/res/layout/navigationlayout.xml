@@ -91,6 +91,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="80dp">
             </com.ljw.device3x.customview.BluetoothStateView>
+            <com.ljw.device3x.customview.VoiceWakeupEnableView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp">
+            </com.ljw.device3x.customview.VoiceWakeupEnableView>
         </LinearLayout>
     </LinearLayout>
 

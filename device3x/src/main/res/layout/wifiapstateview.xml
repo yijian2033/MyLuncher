@@ -13,7 +13,7 @@
         android:id="@+id/wifiaptext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="个人热点"
+        android:text="@string/portable_hotspot"
         android:layout_gravity="center"
         />
 </LinearLayout>

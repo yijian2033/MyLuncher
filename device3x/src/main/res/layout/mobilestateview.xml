@@ -12,7 +12,7 @@
         android:id="@+id/mobiletext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="网络连接"
+        android:text="@string/cellular_networks"
         android:layout_gravity="center"
         />
 </LinearLayout>

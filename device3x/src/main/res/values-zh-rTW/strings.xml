@@ -32,5 +32,12 @@
   <string name="level2_weather">天 氣</string>
   <string name="level2_filemanager">檔案管理</string>
   <string name="level2_warn">征仔預警</string>
+  <string name="voicewakeup">語音喚醒</string>
+  <string name="cellular_networks">網絡連接</string>
+  <string name="fm">FM发射</string>
+  <string name="portable_hotspot">個人熱點</string>
+  <string name="bluetooth">藍 牙</string>
+  <string name="beijing_time">北京時間</string>
+  <string name="format24Hour">M月dd日 EEEE</string>
 
 </resources>
